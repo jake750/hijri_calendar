@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تقويم السنة الهجرية ١٤٤٨</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --bg2: #111827;
+  --bg3: #1a2235;
+  --bg4: #1f2d44;
+  --gold: #e2b96f;
+  --gold2: #f5d898;
+  --gold-dim: rgba(226,185,111,0.15);
+  --green: #34d399;
+  --green-dim: rgba(52,211,153,0.15);
+  --blue: #60a5fa;
+  --blue-dim: rgba(96,165,250,0.12);
+  --purple: #a78bfa;
+  --purple-dim: rgba(167,139,250,0.15);
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #4a5568;
+  --border: rgba(255,255,255,0.07);
+  --radius: 16px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 70% 40% at 15% 5%, rgba(226,185,111,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 85% 90%, rgba(96,165,250,0.05) 0%, transparent 60%);
+  pointer-events:none; z-index:0;
+}
+
+.app { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:1.5rem 1rem 4rem; }
+
+/* ── HEADER ── */
+.header { text-align:center; padding:2rem 0 1.5rem; }
+.bismillah { font-family:'Amiri',serif; color:var(--gold); font-size:1.3rem; margin-bottom:0.8rem; opacity:0.9; }
+.header h1 { font-size:clamp(1.5rem,4vw,2.2rem); font-weight:900; background:linear-gradient(135deg,var(--gold2),var(--gold),#b8852a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.header p { color:var(--text2); font-size:0.85rem; margin-top:0.4rem; }
+
+/* ── STATS BAR ── */
+.stats-bar {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:0.7rem;
+  margin:1.2rem 0;
+}
+.stat-card {
+  background:var(--bg2); border:1px solid var(--border); border-radius:14px;
+  padding:0.9rem 0.7rem; text-align:center;
+}
+.stat-icon { font-size:1.4rem; }
+.stat-val { font-size:1.2rem; font-weight:900; margin:0.2rem 0 0.1rem; }
+.stat-lbl { font-size:0.68rem; color:var(--text2); }
+.stat-card.s-deen .stat-val { color:var(--gold); }
+.stat-card.s-work .stat-val { color:var(--blue); }
+.stat-card.s-gym .stat-val { color:var(--green); }
+.stat-card.s-sleep .stat-val { color:var(--purple); }
+
+/* ── MONTH NAV ── */
+.month-nav {
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--bg2); border:1px solid var(--border); border-radius:14px;
+  padding:0.8rem 1.1rem; margin-bottom:1rem;
+}
+.month-name { font-size:1.1rem; font-weight:700; color:var(--gold2); }
+.month-year { font-size:0.78rem; color:var(--text2); margin-top:0.1rem; }
+.nav-btn {
+  background:var(--bg3); border:1px solid var(--border); border-radius:10px;
+  color:var(--text2); padding:0.45rem 0.8rem; cursor:pointer; font-size:1rem;
+  transition:all 0.2s; font-family:'Cairo',sans-serif;
+}
+.nav-btn:hover { background:var(--bg4); color:var(--gold); border-color:var(--gold-dim); }
+
+/* ── CALENDAR GRID ── */
+.cal-weekdays {
+  display:grid; grid-template-columns:repeat(7,1fr);
+  gap:4px; margin-bottom:4px;
+}
+.cal-weekday {
+  text-align:center; font-size:0.7rem; color:var(--text3);
+  padding:0.4rem 0; font-weight:700; letter-spacing:0.03em;
+}
+
+.cal-grid {
+  display:grid; grid-template-columns:repeat(7,1fr); gap:4px;
+}
+
+.cal-day {
+  aspect-ratio:1; border-radius:12px;
+  background:var(--bg2); border:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer; position:relative; transition:all 0.2s; overflow:hidden;
+  min-height:48px;
+}
+.cal-day:hover { border-color:rgba(226,185,111,0.4); background:var(--bg3); transform:translateY(-1px); }
+.cal-day.empty { background:transparent; border-color:transparent; cursor:default; }
+.cal-day.today { border-color:var(--gold); background:var(--gold-dim); }
+.cal-day.today .day-num { color:var(--gold2); font-weight:900; }
+.cal-day.past { opacity:0.7; }
+
+.cal-day.done-full { background:rgba(52,211,153,0.1); border-color:rgba(52,211,153,0.35); }
+.cal-day.done-partial { background:rgba(226,185,111,0.08); border-color:rgba(226,185,111,0.25); }
+
+.day-num { font-size:0.9rem; font-weight:700; line-height:1; }
+.day-dots { display:flex; gap:2px; margin-top:3px; flex-wrap:wrap; justify-content:center; }
+.dot { width:5px; height:5px; border-radius:50%; }
+.dot-gold { background:var(--gold); }
+.dot-green { background:var(--green); }
+.dot-blue { background:var(--blue); }
+.dot-purple { background:var(--purple); }
+
+.day-progress-ring {
+  position:absolute; bottom:3px; right:3px;
+  font-size:0.55rem; color:var(--green); font-weight:700; opacity:0;
+}
+.cal-day.done-full .day-progress-ring { opacity:1; }
+
+/* ── MODAL OVERLAY ── */
+.overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(6px); z-index:100;
+  display:flex; align-items:flex-end; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity 0.25s;
+}
+.overlay.open { opacity:1; pointer-events:all; }
+
+.modal {
+  background:var(--bg2); border:1px solid rgba(255,255,255,0.1);
+  border-radius:24px 24px 0 0; width:100%; max-width:860px;
+  padding:1.5rem 1.5rem 2.5rem;
+  transform:translateY(30px); transition:transform 0.3s cubic-bezier(.22,1,.36,1);
+  max-height:85vh; overflow-y:auto;
+}
+.overlay.open .modal { transform:translateY(0); }
+
+.modal-header {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:1.3rem;
+}
+.modal-date { }
+.modal-date h2 { font-size:1.2rem; font-weight:900; color:var(--gold2); }
+.modal-date p { font-size:0.78rem; color:var(--text2); margin-top:0.1rem; }
+.close-btn {
+  background:var(--bg3); border:1px solid var(--border); border-radius:10px;
+  color:var(--text2); width:36px; height:36px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+  transition:all 0.2s;
+}
+.close-btn:hover { background:var(--bg4); color:var(--red); }
+
+/* Day progress */
+.day-score {
+  background:var(--bg3); border-radius:14px; padding:0.9rem 1.1rem;
+  margin-bottom:1.2rem; display:flex; align-items:center; gap:1rem;
+}
+.score-circle {
+  width:52px; height:52px; border-radius:50%; flex-shrink:0;
+  background:conic-gradient(var(--green) calc(var(--pct,0) * 1%), var(--bg4) 0%);
+  display:flex; align-items:center; justify-content:center; position:relative;
+}
+.score-circle::before {
+  content:''; position:absolute; inset:6px; border-radius:50%; background:var(--bg3);
+}
+.score-num { position:relative; z-index:1; font-size:0.8rem; font-weight:900; color:var(--green); }
+.score-info h3 { font-size:0.95rem; font-weight:700; }
+.score-info p { font-size:0.75rem; color:var(--text2); margin-top:0.1rem; }
+
+/* Checklist sections */
+.check-section { margin-bottom:1.2rem; }
+.check-section-title {
+  display:flex; align-items:center; gap:0.5rem;
+  font-size:0.82rem; font-weight:700; color:var(--text2);
+  margin-bottom:0.6rem; text-transform:uppercase; letter-spacing:0.06em;
+}
+.check-section-title span { font-size:1rem; }
+
+.check-item {
+  display:flex; align-items:flex-start; gap:0.7rem;
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:12px; padding:0.75rem 0.9rem; margin-bottom:0.45rem;
+  cursor:pointer; transition:all 0.2s; user-select:none;
+}
+.check-item:hover { border-color:rgba(255,255,255,0.13); background:var(--bg4); }
+.check-item.checked { background:rgba(52,211,153,0.08); border-color:rgba(52,211,153,0.3); }
+
+.checkbox {
+  width:20px; height:20px; border-radius:6px; flex-shrink:0;
+  border:2px solid var(--text3); display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s; margin-top:1px;
+}
+.check-item.checked .checkbox { background:var(--green); border-color:var(--green); }
+.check-item.checked .checkbox::after { content:'✓'; color:#000; font-size:0.75rem; font-weight:900; }
+
+.check-label { flex:1; }
+.check-label strong { font-size:0.85rem; font-weight:600; display:block; }
+.check-label span { font-size:0.73rem; color:var(--text2); margin-top:0.1rem; display:block; }
+.check-item.checked .check-label strong { text-decoration:line-through; color:var(--text2); }
+
+.check-tag {
+  font-size:0.65rem; padding:0.15rem 0.45rem; border-radius:20px;
+  font-weight:700; flex-shrink:0; margin-top:2px;
+}
+.tag-deen { background:var(--gold-dim); color:var(--gold); }
+.tag-work { background:var(--blue-dim); color:var(--blue); }
+.tag-gym { background:var(--green-dim); color:var(--green); }
+.tag-sleep { background:var(--purple-dim); color:var(--purple); }
+
+/* Note field */
+.note-area {
+  background:var(--bg3); border:1px solid var(--border); border-radius:12px;
+  padding:0.8rem 1rem; width:100%; color:var(--text);
+  font-family:'Cairo',sans-serif; font-size:0.82rem; resize:none; min-height:70px;
+  margin-top:0.4rem; outline:none; transition:border-color 0.2s;
+}
+.note-area:focus { border-color:rgba(226,185,111,0.4); }
+.note-area::placeholder { color:var(--text3); }
+.note-label { font-size:0.75rem; color:var(--text2); margin-bottom:0.4rem; }
+
+/* Save btn */
+.save-btn {
+  width:100%; margin-top:1rem; padding:0.85rem;
+  background:linear-gradient(135deg, rgba(226,185,111,0.2), rgba(226,185,111,0.1));
+  border:1px solid rgba(226,185,111,0.4); border-radius:12px;
+  color:var(--gold2); font-family:'Cairo',sans-serif; font-size:0.9rem; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.save-btn:hover { background:rgba(226,185,111,0.25); transform:translateY(-1px); }
+.save-btn:active { transform:translateY(0); }
+
+/* Legend */
+.legend {
+  display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center;
+  margin-top:1rem; padding:0.8rem; background:var(--bg2); border-radius:12px;
+  border:1px solid var(--border);
+}
+.legend-item { display:flex; align-items:center; gap:0.35rem; font-size:0.72rem; color:var(--text2); }
+.legend-dot { width:8px; height:8px; border-radius:50%; }
+
+@media(max-width:480px) {
+  .stats-bar { grid-template-columns:repeat(2,1fr); }
+  .cal-weekday { font-size:0.62rem; }
+  .day-num { font-size:0.8rem; }
+  .modal { padding:1.2rem 1rem 2rem; }
+}
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.header { animation:fadeUp .4s ease both; }
+.stats-bar { animation:fadeUp .4s .08s ease both; }
+.month-nav { animation:fadeUp .4s .12s ease both; }
+.cal-weekdays,.cal-grid { animation:fadeUp .4s .16s ease both; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</div>
+    <h1>تقويم السنة الهجرية ١٤٤٨</h1>
+    <p>اضغط على أي يوم لتتبّع مهامك اليومية</p>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-card s-deen">
+      <div class="stat-icon">📖</div>
+      <div class="stat-val" id="stat-deen">0</div>
+      <div class="stat-lbl">يوم حفظ ✅</div>
+    </div>
+    <div class="stat-card s-work">
+      <div class="stat-icon">🎬</div>
+      <div class="stat-val" id="stat-work">0</div>
+      <div class="stat-lbl">يوم عمل ✅</div>
+    </div>
+    <div class="stat-card s-gym">
+      <div class="stat-icon">💪</div>
+      <div class="stat-val" id="stat-gym">0</div>
+      <div class="stat-lbl">يوم جيم ✅</div>
+    </div>
+    <div class="stat-card s-sleep">
+      <div class="stat-icon">🌅</div>
+      <div class="stat-val" id="stat-sleep">0</div>
+      <div class="stat-lbl">فجر ✅</div>
+    </div>
+  </div>
+
+  <div class="month-nav">
+    <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+    <div style="text-align:center">
+      <div class="month-name" id="month-name-ar"></div>
+      <div class="month-year" id="month-name-gr"></div>
+    </div>
+    <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+  </div>
+
+  <div class="cal-weekdays" id="weekday-headers"></div>
+  <div class="cal-grid" id="cal-grid"></div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>يوم مكتمل</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>يوم جزئي</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--blue);opacity:.6"></div>اليوم</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--text3)"></div>يوم فارغ</div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="closeOnBg(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-date">
+        <h2 id="modal-title">الأحد ١ محرم</h2>
+        <p id="modal-subtitle">١ يناير ٢٠٢٥</p>
+      </div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="day-score">
+      <div class="score-circle" id="score-circle" style="--pct:0">
+        <div class="score-num" id="score-num">0%</div>
+      </div>
+      <div class="score-info">
+        <h3 id="score-title">ابدأ يومك بسم الله!</h3>
+        <p id="score-sub">٠ من ١٢ مهمة مكتملة</p>
+      </div>
+    </div>
+
+    <!-- DEEN -->
+    <div class="check-section">
+      <div class="check-section-title"><span>📖</span> الجانب الديني</div>
+      <div class="check-item" onclick="toggle(this,'deen-1')" data-key="deen-1">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>صلاة الفجر في وقتها</strong>
+          <span>الصلاة في المسجد أو البيت في أول الوقت</span>
+        </div>
+        <span class="check-tag tag-deen">دين</span>
+      </div>
+      <div class="check-item" onclick="toggle(this,'deen-2')" data-key="deen-2">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>جلسة الحفظ بعد الفجر</strong>
+          <span>٥–١٠ آيات حفظ + مراجعة آيات البارحة</span>
+        </div>
+        <span class="check-tag tag-deen">دين</span>
+      </div>
+      <div class="check-item" onclick="toggle(this,'deen-3')" data-key="deen-3">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>دراسة الفقه المالكي ١٥ دقيقة</strong>
+          <span>قراءة + تدوين ملاحظات في دفتر الفقه</span>
+        </div>
+        <span class="check-tag tag-deen">دين</span>
+      </div>
+      <div class="check-item" onclick="toggle(this,'deen-4')" data-key="deen-4">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>الصلوات الخمس كاملة</strong>
+          <span>الظهر + العصر + المغرب + العشاء</span>
+        </div>
+        <span class="check-tag tag-deen">دين</span>
+      </div>
+    </div>
+
+    <!-- WORK -->
+    <div class="check-section">
+      <div class="check-section-title"><span>🎬</span> العمل — موشن جرافيكس</div>
+      <div class="check-item" onclick="toggle(this,'work-1')" data-key="work-1">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>جلسة تعلم / دورة (٢+ ساعة)</strong>
+          <span>After Effects أو أي دورة موشن جرافيكس</span>
+        </div>
+        <span class="check-tag tag-work">عمل</span>
+      </div>
+      <div class="check-item" onclick="toggle(this,'work-2')" data-key="work-2">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>مشروع تطبيقي أو بورتفوليو</strong>
+          <span>تنفيذ مشروع حقيقي أو تحسين عمل موجود</span>
+        </div>
+        <span class="check-tag tag-work">عمل</span>
+      </div>
+      <div class="check-item" onclick="toggle(this,'work-3')" data-key="work-3">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>نشر محتوى أو تسويق</strong>
+          <span>انستغرام / تيك توك / LinkedIn / تواصل مع عملاء</span>
+        </div>
+        <span class="check-tag tag-work">عمل</span>
+      </div>
+    </div>
+
+    <!-- GYM -->
+    <div class="check-section">
+      <div class="check-section-title"><span>💪</span> الصحة والرياضة</div>
+      <div class="check-item" onclick="toggle(this,'gym-1')" data-key="gym-1">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>تمرين الجيم أو البحر/المشي</strong>
+          <span>بعد الشروق مباشرة — ٤٥-٦٠ دقيقة</span>
+        </div>
+        <span class="check-tag tag-gym">صحة</span>
+      </div>
+      <div class="check-item" onclick="toggle(this,'gym-2')" data-key="gym-2">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>شرب ١.٥ لتر ماء على الأقل</strong>
+          <span>تتبّع الكميات طوال اليوم</span>
+        </div>
+        <span class="check-tag tag-gym">صحة</span>
+      </div>
+    </div>
+
+    <!-- SLEEP -->
+    <div class="check-section">
+      <div class="check-section-title"><span>🌙</span> النوم والروتين</div>
+      <div class="check-item" onclick="toggle(this,'sleep-1')" data-key="sleep-1">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>النوم قبل ١٠:٣٠ مساءً</strong>
+          <span>إغلاق الجوال ساعة قبل النوم</span>
+        </div>
+        <span class="check-tag tag-sleep">نوم</span>
+      </div>
+      <div class="check-item" onclick="toggle(this,'sleep-2')" data-key="sleep-2">
+        <div class="checkbox"></div>
+        <div class="check-label">
+          <strong>تحضير مهام الغد (٣ أهداف)</strong>
+          <span>كتابة ٣ أهداف رئيسية لليوم التالي</span>
+        </div>
+        <span class="check-tag tag-sleep">نوم</span>
+      </div>
+    </div>
+
+    <div class="note-label">📝 ملاحظات اليوم (اختياري)</div>
+    <textarea class="note-area" id="note-area" placeholder="كيف كان يومك؟ ماذا أنجزت؟ ما الذي تريد تحسينه غداً؟" rows="3"></textarea>
+
+    <button class="save-btn" onclick="saveDay()">💾 حفظ اليوم</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const HIJRI_MONTHS = ['محرم','صفر','ربيع الأول','ربيع الثاني','جمادى الأولى','جمادى الثانية','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
+const WEEKDAYS_AR = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+// Hijri month lengths (approximate for 1448)
+const MONTH_LENGTHS = [30,29,30,29,30,29,30,29,30,29,30,29];
+
+// Hijri 1448 starts approx 26 Jun 2026 (1 Muharram 1448)
+const HIJRI_1448_START = new Date(2026, 5, 26); // June 26, 2026
+
+let currentHijriMonth = 0; // 0 = Muharram
+let selectedDay = null;
+let data = {};
+
+function storageKey(m, d) { return `h1448_m${m}_d${d}`; }
+
+function loadData() {
+  try { data = JSON.parse(localStorage.getItem('hijri1448') || '{}'); } catch(e) { data = {}; }
+}
+function saveData() {
+  localStorage.setItem('hijri1448', JSON.stringify(data));
+}
+
+function dayKey(m, d) { return `${m}-${d}`; }
+
+function getDayData(m, d) {
+  return data[dayKey(m,d)] || { checks:{}, note:'' };
+}
+function setDayData(m, d, val) {
+  data[dayKey(m,d)] = val;
+  saveData();
+}
+
+// Convert hijri day to gregorian approx
+function hijriToGreg(month, day) {
+  let offset = 0;
+  for(let i=0;i<month;i++) offset += MONTH_LENGTHS[i];
+  offset += (day - 1);
+  const d = new Date(HIJRI_1448_START);
+  d.setDate(d.getDate() + offset);
+  return d;
+}
+
+// Get first weekday of hijri month (0=Sun)
+function monthStartWeekday(month) {
+  const d = hijriToGreg(month, 1);
+  return d.getDay();
+}
+
+function gregToHijriDay() {
+  // Returns {month, day} for today if in 1448, else null
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  let offset = Math.round((today - HIJRI_1448_START) / 86400000);
+  if(offset < 0) return null;
+  let m = 0;
+  while(m < 12 && offset >= MONTH_LENGTHS[m]) {
+    offset -= MONTH_LENGTHS[m]; m++;
+  }
+  if(m >= 12) return null;
+  return { month: m, day: offset + 1 };
+}
+
+// ── RENDER ──
+function renderCalendar() {
+  const m = currentHijriMonth;
+  document.getElementById('month-name-ar').textContent = HIJRI_MONTHS[m] + ' ١٤٤٨';
+  const gregStart = hijriToGreg(m, 1);
+  const gregEnd = hijriToGreg(m, MONTH_LENGTHS[m]);
+  const opts = {month:'long', year:'numeric'};
+  document.getElementById('month-name-gr').textContent =
+    gregStart.toLocaleDateString('ar-SA', opts) + ' — ' + gregEnd.toLocaleDateString('ar-SA', {month:'long'});
+
+  // Weekday headers — Sunday first
+  const wdEl = document.getElementById('weekday-headers');
+  wdEl.innerHTML = WEEKDAYS_AR.map(w=>`<div class="cal-weekday">${w}</div>`).join('');
+
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  const startWd = monthStartWeekday(m);
+  const today = gregToHijriDay();
+
+  // Empty cells
+  for(let i=0;i<startWd;i++) {
+    const empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    grid.appendChild(empty);
+  }
+
+  for(let d=1; d<=MONTH_LENGTHS[m]; d++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day';
+
+    const dd = getDayData(m, d);
+    const checks = dd.checks || {};
+    const totalChecks = 12;
+    const doneCount = Object.values(checks).filter(Boolean).length;
+    const pct = doneCount / totalChecks;
+
+    if(today && today.month === m && today.day === d) cell.classList.add('today');
+
+    const gregD = hijriToGreg(m, d);
+    const now = new Date(); now.setHours(0,0,0,0);
+    if(gregD < now && !(today && today.month===m && today.day===d)) cell.classList.add('past');
+
+    if(doneCount > 0) {
+      if(pct >= 0.8) cell.classList.add('done-full');
+      else cell.classList.add('done-partial');
+    }
+
+    // Day number (Arabic-Indic)
+    const numEl = document.createElement('div');
+    numEl.className = 'day-num';
+    numEl.textContent = toArabicNum(d);
+    cell.appendChild(numEl);
+
+    // Dots
+    if(doneCount > 0) {
+      const dots = document.createElement('div');
+      dots.className = 'day-dots';
+      const hasDeen = checks['deen-1']||checks['deen-2']||checks['deen-3']||checks['deen-4'];
+      const hasWork = checks['work-1']||checks['work-2']||checks['work-3'];
+      const hasGym  = checks['gym-1']||checks['gym-2'];
+      const hasSleep= checks['sleep-1']||checks['sleep-2'];
+      if(hasDeen) dots.innerHTML += '<div class="dot dot-gold"></div>';
+      if(hasWork) dots.innerHTML += '<div class="dot dot-blue" style="background:var(--blue)"></div>';
+      if(hasGym)  dots.innerHTML += '<div class="dot dot-green"></div>';
+      if(hasSleep)dots.innerHTML += '<div class="dot dot-purple" style="background:var(--purple)"></div>';
+      cell.appendChild(dots);
+    }
+
+    if(pct >= 0.8 && doneCount > 0) {
+      const ring = document.createElement('div');
+      ring.className = 'day-progress-ring';
+      ring.textContent = '✓';
+      cell.appendChild(ring);
+    }
+
+    cell.addEventListener('click', ()=>openModal(m, d));
+    grid.appendChild(cell);
+  }
+
+  updateStats();
+}
+
+function toArabicNum(n) {
+  return String(n).replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+}
+
+function updateStats() {
+  let deen=0, work=0, gym=0, sleep=0;
+  Object.keys(data).forEach(k => {
+    const dd = data[k];
+    const c = dd.checks || {};
+    if(c['deen-1']&&c['deen-2']) deen++;
+    if(c['work-1']||c['work-2']) work++;
+    if(c['gym-1']) gym++;
+    if(c['deen-1']||c['sleep-1']) sleep++;
+  });
+  document.getElementById('stat-deen').textContent = toArabicNum(deen);
+  document.getElementById('stat-work').textContent = toArabicNum(work);
+  document.getElementById('stat-gym').textContent = toArabicNum(gym);
+  document.getElementById('stat-sleep').textContent = toArabicNum(sleep);
+}
+
+// ── MODAL ──
+let activeMonth, activeDay;
+
+const WEEKDAYS_FULL = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+
+function openModal(m, d) {
+  activeMonth = m; activeDay = d;
+  const greg = hijriToGreg(m, d);
+  const wdName = WEEKDAYS_FULL[greg.getDay()];
+  document.getElementById('modal-title').textContent = `${wdName} ${toArabicNum(d)} ${HIJRI_MONTHS[m]}`;
+  document.getElementById('modal-subtitle').textContent = greg.toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+  const dd = getDayData(m, d);
+  const checks = dd.checks || {};
+
+  // Restore checkboxes
+  document.querySelectorAll('.check-item').forEach(item => {
+    const key = item.dataset.key;
+    if(checks[key]) item.classList.add('checked');
+    else item.classList.remove('checked');
+  });
+
+  document.getElementById('note-area').value = dd.note || '';
+  updateScore();
+
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeOnBg(e) {
+  if(e.target === document.getElementById('overlay')) closeModal();
+}
+
+function toggle(el, key) {
+  el.classList.toggle('checked');
+  updateScore();
+  // Auto-save on toggle
+  autoSave();
+}
+
+function autoSave() {
+  const checks = {};
+  document.querySelectorAll('.check-item').forEach(item => {
+    checks[item.dataset.key] = item.classList.contains('checked');
+  });
+  const note = document.getElementById('note-area').value;
+  setDayData(activeMonth, activeDay, { checks, note });
+  renderCalendar();
+}
+
+function updateScore() {
+  const items = document.querySelectorAll('.check-item');
+  const total = items.length;
+  let done = 0;
+  items.forEach(i => { if(i.classList.contains('checked')) done++; });
+  const pct = Math.round((done/total)*100);
+
+  const circle = document.getElementById('score-circle');
+  circle.style.setProperty('--pct', pct);
+  document.getElementById('score-num').textContent = pct + '%';
+  document.getElementById('score-sub').textContent = `${toArabicNum(done)} من ${toArabicNum(total)} مهمة مكتملة`;
+
+  const titles = ['ابدأ يومك بسم الله! 🌅','استمر، أنت على الطريق 💪','جيد جداً، اكمل! 🔥','ممتاز، قريب من الإتمام ⭐','يوم مثالي ما شاء الله 🌟'];
+  const idx = pct===0?0:pct<30?1:pct<60?2:pct<90?3:4;
+  document.getElementById('score-title').textContent = titles[idx];
+}
+
+function saveDay() {
+  autoSave();
+  // Visual feedback
+  const btn = document.querySelector('.save-btn');
+  btn.textContent = '✅ تم الحفظ!';
+  btn.style.background = 'rgba(52,211,153,0.2)';
+  btn.style.borderColor = 'rgba(52,211,153,0.5)';
+  btn.style.color = 'var(--green)';
+  setTimeout(() => {
+    btn.textContent = '💾 حفظ اليوم';
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    closeModal();
+  }, 900);
+}
+
+function changeMonth(dir) {
+  currentHijriMonth = Math.max(0, Math.min(11, currentHijriMonth + dir));
+  renderCalendar();
+}
+
+// ── INIT ──
+loadData();
+
+// Start on current hijri month if in 1448, else Muharram
+const todayH = gregToHijriDay();
+if(todayH) currentHijriMonth = todayH.month;
+else currentHijriMonth = 0;
+
+renderCalendar();
+</script>
+</body>
+</html>
