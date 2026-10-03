@@ -3,725 +3,1287 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تقويم السنة الهجرية ١٤٤٨</title>
+<title>تقويم ١٤٤٨</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0a0e1a;
-  --bg2: #111827;
-  --bg3: #1a2235;
-  --bg4: #1f2d44;
-  --gold: #e2b96f;
-  --gold2: #f5d898;
-  --gold-dim: rgba(226,185,111,0.15);
-  --green: #34d399;
-  --green-dim: rgba(52,211,153,0.15);
-  --blue: #60a5fa;
-  --blue-dim: rgba(96,165,250,0.12);
-  --purple: #a78bfa;
-  --purple-dim: rgba(167,139,250,0.15);
-  --red: #f87171;
-  --text: #e2e8f0;
-  --text2: #94a3b8;
-  --text3: #4a5568;
-  --border: rgba(255,255,255,0.07);
-  --radius: 16px;
+:root{
+  --bg:#0a0e1a;--bg2:#111827;--bg3:#1a2235;--bg4:#1f2d44;
+  --gold:#e2b96f;--gold2:#f5d898;--gold-dim:rgba(226,185,111,0.15);
+  --green:#34d399;--green-dim:rgba(52,211,153,0.15);
+  --blue:#60a5fa;--blue-dim:rgba(96,165,250,0.12);
+  --purple:#a78bfa;--purple-dim:rgba(167,139,250,0.15);
+  --red:#f87171;--red-dim:rgba(248,113,113,0.15);
+  --orange:#fb923c;--orange-dim:rgba(251,146,60,0.15);
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#4a5568;
+  --border:rgba(255,255,255,0.07);
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 70% 40% at 15% 5%,rgba(226,185,111,0.07) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 50% at 85% 90%,rgba(96,165,250,0.05) 0%,transparent 60%);
+  pointer-events:none;z-index:0;}
 
-* { margin:0; padding:0; box-sizing:border-box; }
+.screen{display:none;position:relative;z-index:1;}
+.screen.active{display:block;}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Cairo', sans-serif;
-  min-height: 100vh;
-  overflow-x: hidden;
+/* ── LOADING ── */
+#loading{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;}
+#loading.hidden{display:none;}
+.spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:var(--text2);font-size:.85rem;}
+
+/* ── AUTH ── */
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;}
+.auth-box{background:var(--bg2);border:1px solid rgba(226,185,111,.2);border-radius:24px;padding:2.5rem 2rem;width:100%;max-width:400px;}
+.auth-logo{text-align:center;margin-bottom:1.8rem;}
+.bismillah{font-family:'Amiri',serif;color:var(--gold);font-size:1.2rem;margin-bottom:.5rem;}
+.auth-logo h1{font-size:1.6rem;font-weight:900;background:linear-gradient(135deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.auth-logo p{font-size:.78rem;color:var(--text2);margin-top:.3rem;}
+.auth-tabs{display:flex;background:var(--bg3);border-radius:12px;padding:4px;margin-bottom:1.4rem;}
+.auth-tab{flex:1;padding:.5rem;border:none;border-radius:9px;background:transparent;color:var(--text2);font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.auth-tab.active{background:var(--bg4);color:var(--gold2);}
+.form-group{margin-bottom:.9rem;}
+.form-label{font-size:.76rem;color:var(--text2);margin-bottom:.35rem;display:block;}
+.form-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:.68rem .9rem;color:var(--text);font-family:'Cairo',sans-serif;font-size:.87rem;outline:none;transition:border-color .2s;}
+.form-input:focus{border-color:rgba(226,185,111,.5);}
+.form-input::placeholder{color:var(--text3);}
+.auth-btn{width:100%;padding:.82rem;margin-top:.4rem;background:linear-gradient(135deg,rgba(226,185,111,.22),rgba(226,185,111,.1));border:1px solid rgba(226,185,111,.4);border-radius:12px;color:var(--gold2);font-family:'Cairo',sans-serif;font-size:.93rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.auth-btn:hover{background:rgba(226,185,111,.28);}
+
+/* validation messages */
+.auth-msg{
+  display:flex;align-items:flex-start;gap:.45rem;
+  font-size:.78rem;margin-top:.6rem;padding:.55rem .75rem;
+  border-radius:9px;border:1px solid;min-height:0;
+  opacity:0;transform:translateY(-4px);
+  transition:opacity .25s,transform .25s;
+  pointer-events:none;
 }
+.auth-msg.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+.auth-msg.error{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.35);color:#fca5a5;}
+.auth-msg.success{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.35);color:#6ee7b7;}
+.auth-msg .msg-icon{font-size:.95rem;flex-shrink:0;line-height:1.2;}
+.auth-msg .msg-text{line-height:1.5;}
 
-body::before {
-  content:'';
-  position:fixed; inset:0;
-  background:
-    radial-gradient(ellipse 70% 40% at 15% 5%, rgba(226,185,111,0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 50% at 85% 90%, rgba(96,165,250,0.05) 0%, transparent 60%);
-  pointer-events:none; z-index:0;
+/* guest button */
+.guest-divider{display:flex;align-items:center;gap:.6rem;margin:.9rem 0 .75rem;}
+.guest-divider::before,.guest-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.guest-divider span{font-size:.7rem;color:var(--text3);white-space:nowrap;}
+.guest-btn{
+  width:100%;padding:.72rem;
+  background:rgba(148,163,184,.07);border:1px dashed rgba(148,163,184,.25);border-radius:12px;
+  color:var(--text2);font-family:'Cairo',sans-serif;font-size:.85rem;font-weight:600;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.5rem;
 }
+.guest-btn:hover{background:rgba(148,163,184,.13);border-color:rgba(148,163,184,.4);color:var(--text);}
 
-.app { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:1.5rem 1rem 4rem; }
+/* guest upgrade banner inside app */
+.upgrade-banner{
+  background:linear-gradient(135deg,rgba(251,146,60,.1),rgba(251,146,60,.04));
+  border:1px solid rgba(251,146,60,.28);border-radius:12px;
+  padding:.75rem 1rem;margin-bottom:.9rem;
+  display:flex;align-items:center;justify-content:space-between;gap:.7rem;
+}
+.upgrade-banner.hidden{display:none;}
+.upgrade-banner-text h3{font-size:.82rem;font-weight:700;color:var(--orange);}
+.upgrade-banner-text p{font-size:.68rem;color:var(--text2);margin-top:.1rem;}
+.upgrade-btn{
+  background:var(--orange-dim);border:1px solid rgba(251,146,60,.4);border-radius:9px;
+  color:var(--orange);font-family:'Cairo',sans-serif;font-size:.75rem;font-weight:700;
+  padding:.38rem .75rem;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;
+}
+.upgrade-btn:hover{background:rgba(251,146,60,.2);}
 
-/* ── HEADER ── */
-.header { text-align:center; padding:2rem 0 1.5rem; }
-.bismillah { font-family:'Amiri',serif; color:var(--gold); font-size:1.3rem; margin-bottom:0.8rem; opacity:0.9; }
-.header h1 { font-size:clamp(1.5rem,4vw,2.2rem); font-weight:900; background:linear-gradient(135deg,var(--gold2),var(--gold),#b8852a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.header p { color:var(--text2); font-size:0.85rem; margin-top:0.4rem; }
+/* upgrade modal */
+.upg-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:700;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .22s;}
+.upg-overlay.open{opacity:1;pointer-events:all;}
+.upg-modal{background:var(--bg2);border:1px solid rgba(255,255,255,.1);border-radius:20px;width:100%;max-width:480px;padding:1.6rem 1.5rem;max-height:90vh;overflow-y:auto;}
+.upg-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;}
+.upg-hdr h2{font-size:1rem;font-weight:700;color:var(--orange);}
+.upg-step{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:.85rem 1rem;margin-bottom:.6rem;display:flex;gap:.75rem;align-items:flex-start;}
+.upg-step-num{width:26px;height:26px;border-radius:50%;background:var(--orange-dim);border:1px solid rgba(251,146,60,.4);color:var(--orange);font-size:.78rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.05rem;}
+.upg-step-txt h4{font-size:.83rem;font-weight:700;margin-bottom:.18rem;}
+.upg-step-txt p{font-size:.72rem;color:var(--text2);line-height:1.5;}
+.upg-form{margin-top:.9rem;}
+.upg-form .form-group{margin-bottom:.75rem;}
 
-/* ── STATS BAR ── */
-.stats-bar {
-  display:grid; grid-template-columns:repeat(4,1fr); gap:0.7rem;
-  margin:1.2rem 0;
+/* toast snackbar */
+#toast{
+  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--bg3);border:1px solid var(--border);border-radius:12px;
+  padding:.65rem 1.1rem;font-size:.82rem;font-weight:600;
+  display:flex;align-items:center;gap:.5rem;
+  z-index:9000;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
 }
-.stat-card {
-  background:var(--bg2); border:1px solid var(--border); border-radius:14px;
-  padding:0.9rem 0.7rem; text-align:center;
-}
-.stat-icon { font-size:1.4rem; }
-.stat-val { font-size:1.2rem; font-weight:900; margin:0.2rem 0 0.1rem; }
-.stat-lbl { font-size:0.68rem; color:var(--text2); }
-.stat-card.s-deen .stat-val { color:var(--gold); }
-.stat-card.s-work .stat-val { color:var(--blue); }
-.stat-card.s-gym .stat-val { color:var(--green); }
-.stat-card.s-sleep .stat-val { color:var(--purple); }
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.t-success{border-color:rgba(52,211,153,.4);color:#6ee7b7;}
+#toast.t-error{border-color:rgba(248,113,113,.4);color:#fca5a5;}
+#toast.t-info{border-color:rgba(96,165,250,.4);color:#93c5fd;}
 
-/* ── MONTH NAV ── */
-.month-nav {
-  display:flex; align-items:center; justify-content:space-between;
-  background:var(--bg2); border:1px solid var(--border); border-radius:14px;
-  padding:0.8rem 1.1rem; margin-bottom:1rem;
-}
-.month-name { font-size:1.1rem; font-weight:700; color:var(--gold2); }
-.month-year { font-size:0.78rem; color:var(--text2); margin-top:0.1rem; }
-.nav-btn {
-  background:var(--bg3); border:1px solid var(--border); border-radius:10px;
-  color:var(--text2); padding:0.45rem 0.8rem; cursor:pointer; font-size:1rem;
-  transition:all 0.2s; font-family:'Cairo',sans-serif;
-}
-.nav-btn:hover { background:var(--bg4); color:var(--gold); border-color:var(--gold-dim); }
+/* ── APP LAYOUT ── */
+.app{max-width:880px;margin:0 auto;padding:1.2rem 1rem 4rem;}
 
-/* ── CALENDAR GRID ── */
-.cal-weekdays {
-  display:grid; grid-template-columns:repeat(7,1fr);
-  gap:4px; margin-bottom:4px;
-}
-.cal-weekday {
-  text-align:center; font-size:0.7rem; color:var(--text3);
-  padding:0.4rem 0; font-weight:700; letter-spacing:0.03em;
-}
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:.7rem 1rem;margin-bottom:.9rem;}
+.topbar-left h2{font-size:.92rem;font-weight:700;color:var(--gold2);}
+.topbar-left span{font-size:.7rem;color:var(--text2);display:block;}
+.topbar-right{display:flex;align-items:center;gap:.5rem;}
+.user-badge{display:flex;align-items:center;gap:.45rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:.38rem .75rem;font-size:.8rem;font-weight:600;}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--orange));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;color:#000;flex-shrink:0;}
+.icon-btn{background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text2);width:33px;height:33px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .2s;}
+.icon-btn:hover{color:var(--red);border-color:var(--red-dim);}
 
-.cal-grid {
-  display:grid; grid-template-columns:repeat(7,1fr); gap:4px;
-}
+/* TODAY DATE */
+.today-bar{text-align:center;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.55rem;margin-bottom:.9rem;}
+.today-hijri-txt{font-size:.98rem;font-weight:700;color:var(--gold2);}
+.today-miladi-txt{font-size:.7rem;color:var(--text2);margin-top:.12rem;}
 
-.cal-day {
-  aspect-ratio:1; border-radius:12px;
-  background:var(--bg2); border:1px solid var(--border);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  cursor:pointer; position:relative; transition:all 0.2s; overflow:hidden;
-  min-height:48px;
-}
-.cal-day:hover { border-color:rgba(226,185,111,0.4); background:var(--bg3); transform:translateY(-1px); }
-.cal-day.empty { background:transparent; border-color:transparent; cursor:default; }
-.cal-day.today { border-color:var(--gold); background:var(--gold-dim); }
-.cal-day.today .day-num { color:var(--gold2); font-weight:900; }
-.cal-day.past { opacity:0.7; }
+/* STATS */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:.55rem;margin-bottom:.9rem;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.75rem .5rem;text-align:center;}
+.stat-icon{font-size:1.15rem;}.stat-val{font-size:1.05rem;font-weight:900;margin:.12rem 0 .08rem;}.stat-lbl{font-size:.6rem;color:var(--text2);}
+.s-deen .stat-val{color:var(--gold);}.s-work .stat-val{color:var(--blue);}.s-gym .stat-val{color:var(--green);}.s-fajr .stat-val{color:var(--purple);}
 
-.cal-day.done-full { background:rgba(52,211,153,0.1); border-color:rgba(52,211,153,0.35); }
-.cal-day.done-partial { background:rgba(226,185,111,0.08); border-color:rgba(226,185,111,0.25); }
+/* TABS */
+.month-tabs{display:flex;gap:.35rem;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.32rem;margin-bottom:.75rem;overflow-x:auto;}
+.month-tabs::-webkit-scrollbar{height:3px;}.month-tabs::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
+.mtab{flex-shrink:0;padding:.4rem .55rem;border:none;border-radius:7px;background:transparent;color:var(--text2);font-family:'Cairo',sans-serif;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.mtab.active{background:var(--bg4);color:var(--gold2);}
+.mtab.prep-mtab.active{color:var(--orange);}
 
-.day-num { font-size:0.9rem; font-weight:700; line-height:1; }
-.day-dots { display:flex; gap:2px; margin-top:3px; flex-wrap:wrap; justify-content:center; }
-.dot { width:5px; height:5px; border-radius:50%; }
-.dot-gold { background:var(--gold); }
-.dot-green { background:var(--green); }
-.dot-blue { background:var(--blue); }
-.dot-purple { background:var(--purple); }
+/* MONTH NAV */
+.month-nav{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:.65rem .95rem;margin-bottom:.75rem;}
+.month-center{text-align:center;}
+.month-h-lbl{font-size:.98rem;font-weight:700;color:var(--gold2);}
+.month-m-lbl{font-size:.67rem;color:var(--text2);margin-top:.1rem;}
+.nav-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text2);padding:.38rem .65rem;cursor:pointer;font-size:.88rem;transition:all .2s;font-family:'Cairo',sans-serif;}
+.nav-btn:hover{color:var(--gold);border-color:var(--gold-dim);}
+.nav-btn:disabled{opacity:.3;cursor:default;}
 
-.day-progress-ring {
-  position:absolute; bottom:3px; right:3px;
-  font-size:0.55rem; color:var(--green); font-weight:700; opacity:0;
-}
-.cal-day.done-full .day-progress-ring { opacity:1; }
+/* PREP BANNER */
+.prep-banner{background:linear-gradient(135deg,rgba(251,146,60,.09),rgba(251,146,60,.03));border:1px solid rgba(251,146,60,.22);border-radius:12px;padding:.75rem .95rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.65rem;}
+.prep-banner.hidden{display:none;}
+.prep-banner h3{font-size:.83rem;font-weight:700;color:var(--orange);}
+.prep-banner p{font-size:.7rem;color:var(--text2);margin-top:.12rem;}
 
-/* ── MODAL OVERLAY ── */
-.overlay {
-  position:fixed; inset:0; background:rgba(0,0,0,0.75);
-  backdrop-filter:blur(6px); z-index:100;
-  display:flex; align-items:flex-end; justify-content:center;
-  opacity:0; pointer-events:none; transition:opacity 0.25s;
-}
-.overlay.open { opacity:1; pointer-events:all; }
+/* CALENDAR */
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:3px;}
+.cal-weekday{text-align:center;font-size:.63rem;color:var(--text3);padding:.32rem 0;font-weight:700;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-day{aspect-ratio:1;border-radius:9px;background:var(--bg2);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .18s;min-height:42px;}
+.cal-day:hover{border-color:rgba(226,185,111,.4);background:var(--bg3);transform:translateY(-1px);}
+.cal-day.empty{background:transparent!important;border-color:transparent!important;cursor:default!important;transform:none!important;}
+.cal-day.today{border-color:var(--gold)!important;background:var(--gold-dim)!important;}
+.cal-day.today .day-num{color:var(--gold2);font-weight:900;}
+.cal-day.prep-day{background:rgba(251,146,60,.05);border-color:rgba(251,146,60,.16);}
+.cal-day.prep-day .day-num{color:var(--orange);}
+.cal-day.s-perfect{background:rgba(52,211,153,.13);border-color:rgba(52,211,153,.38);}
+.cal-day.s-good{background:rgba(52,211,153,.06);border-color:rgba(52,211,153,.2);}
+.cal-day.s-mixed{background:rgba(251,146,60,.09);border-color:rgba(251,146,60,.28);}
+.cal-day.s-bad{background:rgba(248,113,113,.09);border-color:rgba(248,113,113,.28);}
+.day-num{font-size:.83rem;font-weight:700;line-height:1;}
+.day-sub{font-size:.5rem;color:var(--text3);margin-top:1px;}
+.day-dots{display:flex;gap:2px;margin-top:2px;justify-content:center;flex-wrap:wrap;}
+.dot{width:4px;height:4px;border-radius:50%;}
 
-.modal {
-  background:var(--bg2); border:1px solid rgba(255,255,255,0.1);
-  border-radius:24px 24px 0 0; width:100%; max-width:860px;
-  padding:1.5rem 1.5rem 2.5rem;
-  transform:translateY(30px); transition:transform 0.3s cubic-bezier(.22,1,.36,1);
-  max-height:85vh; overflow-y:auto;
-}
-.overlay.open .modal { transform:translateY(0); }
+/* LEGEND */
+.legend{display:flex;gap:.55rem;flex-wrap:wrap;justify-content:center;margin-top:.75rem;padding:.65rem;background:var(--bg2);border-radius:10px;border:1px solid var(--border);}
+.leg-item{display:flex;align-items:center;gap:.28rem;font-size:.65rem;color:var(--text2);}
+.leg-box{width:10px;height:10px;border-radius:3px;border:1px solid;}
 
-.modal-header {
-  display:flex; align-items:center; justify-content:space-between; margin-bottom:1.3rem;
-}
-.modal-date { }
-.modal-date h2 { font-size:1.2rem; font-weight:900; color:var(--gold2); }
-.modal-date p { font-size:0.78rem; color:var(--text2); margin-top:0.1rem; }
-.close-btn {
-  background:var(--bg3); border:1px solid var(--border); border-radius:10px;
-  color:var(--text2); width:36px; height:36px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center; font-size:1.1rem;
-  transition:all 0.2s;
-}
-.close-btn:hover { background:var(--bg4); color:var(--red); }
+/* ══ MODAL ══ */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(7px);z-index:500;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--bg2);border:1px solid rgba(255,255,255,.1);border-radius:22px 22px 0 0;width:100%;max-width:880px;padding:1.35rem 1.35rem 2.5rem;transform:translateY(30px);transition:transform .3s cubic-bezier(.22,1,.36,1);max-height:90vh;overflow-y:auto;}
+.overlay.open .modal{transform:translateY(0);}
 
-/* Day progress */
-.day-score {
-  background:var(--bg3); border-radius:14px; padding:0.9rem 1.1rem;
-  margin-bottom:1.2rem; display:flex; align-items:center; gap:1rem;
-}
-.score-circle {
-  width:52px; height:52px; border-radius:50%; flex-shrink:0;
-  background:conic-gradient(var(--green) calc(var(--pct,0) * 1%), var(--bg4) 0%);
-  display:flex; align-items:center; justify-content:center; position:relative;
-}
-.score-circle::before {
-  content:''; position:absolute; inset:6px; border-radius:50%; background:var(--bg3);
-}
-.score-num { position:relative; z-index:1; font-size:0.8rem; font-weight:900; color:var(--green); }
-.score-info h3 { font-size:0.95rem; font-weight:700; }
-.score-info p { font-size:0.75rem; color:var(--text2); margin-top:0.1rem; }
+.modal-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem;}
+.modal-date-h{font-size:1.08rem;font-weight:900;color:var(--gold2);}
+.modal-date-m{font-size:.72rem;color:var(--text2);margin-top:.18rem;}
+.modal-badge{display:inline-block;font-size:.66rem;font-weight:700;padding:.16rem .5rem;border-radius:20px;margin-top:.28rem;}
+.badge-prep{background:var(--orange-dim);color:var(--orange);}
+.badge-hidden{display:none;}
+.close-btn{background:var(--bg3);border:1px solid var(--border);border-radius:9px;color:var(--text2);width:33px;height:33px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.95rem;transition:all .2s;flex-shrink:0;}
+.close-btn:hover{color:var(--red);}
 
-/* Checklist sections */
-.check-section { margin-bottom:1.2rem; }
-.check-section-title {
-  display:flex; align-items:center; gap:0.5rem;
-  font-size:0.82rem; font-weight:700; color:var(--text2);
-  margin-bottom:0.6rem; text-transform:uppercase; letter-spacing:0.06em;
+/* SCORE */
+.day-score{background:var(--bg3);border-radius:12px;padding:.82rem .95rem;margin-bottom:.95rem;display:flex;align-items:center;gap:.85rem;}
+.score-ring{width:48px;height:48px;border-radius:50%;flex-shrink:0;background:conic-gradient(var(--rc,var(--text3)) calc(var(--rp,0)*1%),var(--bg4) 0%);display:flex;align-items:center;justify-content:center;position:relative;}
+.score-ring::before{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--bg3);}
+.score-n{position:relative;z-index:1;font-size:.7rem;font-weight:900;}
+.score-info h3{font-size:.87rem;font-weight:700;}
+.score-info p{font-size:.68rem;color:var(--text2);margin-top:.08rem;}
+
+/* GOAL SECTIONS */
+.goal-sec{margin-bottom:.95rem;}
+.goal-sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.45rem;}
+.goal-sec-title{display:flex;align-items:center;gap:.38rem;font-size:.74rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;}
+.add-goal-btn{background:transparent;border:1px dashed rgba(226,185,111,.3);border-radius:7px;color:var(--text3);font-family:'Cairo',sans-serif;font-size:.68rem;padding:.22rem .55rem;cursor:pointer;transition:all .2s;}
+.add-goal-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+
+/* GOAL ITEM */
+.goal-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:.58rem .78rem;margin-bottom:.32rem;display:flex;align-items:center;gap:.55rem;transition:all .18s;}
+.goal-info{flex:1;min-width:0;}
+.goal-info strong{font-size:.8rem;font-weight:600;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.goal-info span{font-size:.67rem;color:var(--text2);margin-top:.06rem;display:block;}
+.goal-type-badge{font-size:.58rem;padding:.1rem .38rem;border-radius:20px;font-weight:700;flex-shrink:0;white-space:nowrap;}
+.gb-routine{background:rgba(96,165,250,.15);color:var(--blue);}
+.gb-daily{background:rgba(167,139,250,.15);color:var(--purple);}
+.goal-cat-tag{font-size:.58rem;padding:.1rem .38rem;border-radius:20px;font-weight:700;flex-shrink:0;}
+.gc-deen{background:var(--gold-dim);color:var(--gold);}
+.gc-work{background:var(--blue-dim);color:var(--blue);}
+.gc-gym{background:var(--green-dim);color:var(--green);}
+.gc-sleep{background:var(--purple-dim);color:var(--purple);}
+.gc-prep{background:var(--orange-dim);color:var(--orange);}
+.gc-other{background:rgba(148,163,184,.12);color:var(--text2);}
+.goal-btns{display:flex;gap:.28rem;flex-shrink:0;}
+.tbtn{width:29px;height:29px;border-radius:7px;border:1.5px solid var(--border);background:var(--bg4);cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;transition:all .18s;}
+.tbtn.tick-btn:hover{border-color:var(--green);background:var(--green-dim);}
+.tbtn.cross-btn:hover{border-color:var(--red);background:var(--red-dim);}
+.tbtn.tick-btn.active{border-color:var(--green);background:var(--green-dim);color:var(--green);font-weight:900;}
+.tbtn.cross-btn.active{border-color:var(--red);background:var(--red-dim);color:var(--red);font-weight:900;}
+.tbtn.del-btn{border-color:transparent;background:transparent;color:var(--text3);font-size:.68rem;}
+.tbtn.del-btn:hover{border-color:var(--red-dim);color:var(--red);background:var(--red-dim);}
+.goal-item.is-tick{background:rgba(52,211,153,.07);border-color:rgba(52,211,153,.2);}
+.goal-item.is-cross{background:rgba(248,113,113,.06);border-color:rgba(248,113,113,.16);}
+.goal-item.is-tick .goal-info strong{color:var(--green);}
+.goal-item.is-cross .goal-info strong{text-decoration:line-through;color:var(--text3);}
+
+/* ADD GOAL FORM */
+.add-goal-form{background:var(--bg3);border:1px dashed rgba(226,185,111,.25);border-radius:10px;padding:.75rem;margin-bottom:.32rem;display:none;}
+.add-goal-form.open{display:block;}
+.aform-row{display:flex;gap:.4rem;margin-bottom:.4rem;flex-wrap:wrap;}
+.mini-inp{flex:1;min-width:120px;background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:.42rem .65rem;color:var(--text);font-family:'Cairo',sans-serif;font-size:.78rem;outline:none;transition:border-color .2s;}
+.mini-inp:focus{border-color:rgba(226,185,111,.4);}
+.mini-inp::placeholder{color:var(--text3);}
+.mini-sel{background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:.42rem .5rem;color:var(--text2);font-family:'Cairo',sans-serif;font-size:.73rem;outline:none;cursor:pointer;}
+.aform-btns{display:flex;gap:.35rem;}
+.aform-ok{flex:1;padding:.38rem;border:none;border-radius:7px;background:var(--gold-dim);color:var(--gold2);font-family:'Cairo',sans-serif;font-size:.76rem;font-weight:700;cursor:pointer;}
+.aform-ok:hover{background:rgba(226,185,111,.22);}
+.aform-cancel{padding:.38rem .65rem;border:1px solid var(--border);border-radius:7px;background:transparent;color:var(--text3);font-family:'Cairo',sans-serif;font-size:.76rem;cursor:pointer;}
+.type-toggle{display:flex;background:var(--bg4);border-radius:7px;padding:2px;border:1px solid var(--border);}
+.type-opt{flex:1;padding:.3rem .4rem;border:none;border-radius:5px;background:transparent;color:var(--text3);font-family:'Cairo',sans-serif;font-size:.7rem;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.type-opt.active{background:var(--bg2);color:var(--gold2);}
+
+/* NOTE & SAVE */
+.note-lbl{font-size:.72rem;color:var(--text2);margin-bottom:.32rem;}
+.note-area{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:.72rem .88rem;width:100%;color:var(--text);font-family:'Cairo',sans-serif;font-size:.78rem;resize:none;min-height:58px;outline:none;transition:border-color .2s;}
+.note-area:focus{border-color:rgba(226,185,111,.38);}
+.note-area::placeholder{color:var(--text3);}
+.save-btn{width:100%;margin-top:.82rem;padding:.78rem;background:linear-gradient(135deg,rgba(226,185,111,.2),rgba(226,185,111,.09));border:1px solid rgba(226,185,111,.38);border-radius:10px;color:var(--gold2);font-family:'Cairo',sans-serif;font-size:.87rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.save-btn:hover{background:rgba(226,185,111,.24);}
+
+/* MANAGE GOALS MODAL */
+.mgmt-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:600;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .22s;}
+.mgmt-overlay.open{opacity:1;pointer-events:all;}
+.mgmt-modal{background:var(--bg2);border:1px solid rgba(255,255,255,.1);border-radius:20px;width:100%;max-width:560px;padding:1.4rem;max-height:85vh;overflow-y:auto;}
+.mgmt-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;}
+.mgmt-hdr h2{font-size:1rem;font-weight:700;color:var(--gold2);}
+
+.goal-manage-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:.6rem .8rem;margin-bottom:.32rem;display:flex;align-items:center;gap:.5rem;}
+.gmi-info{flex:1;min-width:0;}
+.gmi-info strong{font-size:.8rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gmi-info span{font-size:.66rem;color:var(--text2);}
+.gmi-del{background:transparent;border:1px solid var(--red-dim);border-radius:7px;color:var(--red);font-size:.7rem;padding:.28rem .55rem;cursor:pointer;font-family:'Cairo',sans-serif;transition:all .2s;}
+.gmi-del:hover{background:var(--red-dim);}
+.empty-goals{text-align:center;padding:1.5rem;color:var(--text3);font-size:.82rem;}
+
+@media(max-width:480px){
+  .stats-bar{grid-template-columns:repeat(2,1fr);}
+  .cal-weekday{font-size:.58rem;}.day-num{font-size:.75rem;}
+  .modal,.mgmt-modal{padding:1.1rem .82rem 2rem;}
+  .tbtn{width:26px;height:26px;font-size:.75rem;}
+  .aform-row{gap:.3rem;}
 }
-.check-section-title span { font-size:1rem; }
-
-.check-item {
-  display:flex; align-items:flex-start; gap:0.7rem;
-  background:var(--bg3); border:1px solid var(--border);
-  border-radius:12px; padding:0.75rem 0.9rem; margin-bottom:0.45rem;
-  cursor:pointer; transition:all 0.2s; user-select:none;
-}
-.check-item:hover { border-color:rgba(255,255,255,0.13); background:var(--bg4); }
-.check-item.checked { background:rgba(52,211,153,0.08); border-color:rgba(52,211,153,0.3); }
-
-.checkbox {
-  width:20px; height:20px; border-radius:6px; flex-shrink:0;
-  border:2px solid var(--text3); display:flex; align-items:center; justify-content:center;
-  transition:all 0.2s; margin-top:1px;
-}
-.check-item.checked .checkbox { background:var(--green); border-color:var(--green); }
-.check-item.checked .checkbox::after { content:'✓'; color:#000; font-size:0.75rem; font-weight:900; }
-
-.check-label { flex:1; }
-.check-label strong { font-size:0.85rem; font-weight:600; display:block; }
-.check-label span { font-size:0.73rem; color:var(--text2); margin-top:0.1rem; display:block; }
-.check-item.checked .check-label strong { text-decoration:line-through; color:var(--text2); }
-
-.check-tag {
-  font-size:0.65rem; padding:0.15rem 0.45rem; border-radius:20px;
-  font-weight:700; flex-shrink:0; margin-top:2px;
-}
-.tag-deen { background:var(--gold-dim); color:var(--gold); }
-.tag-work { background:var(--blue-dim); color:var(--blue); }
-.tag-gym { background:var(--green-dim); color:var(--green); }
-.tag-sleep { background:var(--purple-dim); color:var(--purple); }
-
-/* Note field */
-.note-area {
-  background:var(--bg3); border:1px solid var(--border); border-radius:12px;
-  padding:0.8rem 1rem; width:100%; color:var(--text);
-  font-family:'Cairo',sans-serif; font-size:0.82rem; resize:none; min-height:70px;
-  margin-top:0.4rem; outline:none; transition:border-color 0.2s;
-}
-.note-area:focus { border-color:rgba(226,185,111,0.4); }
-.note-area::placeholder { color:var(--text3); }
-.note-label { font-size:0.75rem; color:var(--text2); margin-bottom:0.4rem; }
-
-/* Save btn */
-.save-btn {
-  width:100%; margin-top:1rem; padding:0.85rem;
-  background:linear-gradient(135deg, rgba(226,185,111,0.2), rgba(226,185,111,0.1));
-  border:1px solid rgba(226,185,111,0.4); border-radius:12px;
-  color:var(--gold2); font-family:'Cairo',sans-serif; font-size:0.9rem; font-weight:700;
-  cursor:pointer; transition:all 0.2s;
-}
-.save-btn:hover { background:rgba(226,185,111,0.25); transform:translateY(-1px); }
-.save-btn:active { transform:translateY(0); }
-
-/* Legend */
-.legend {
-  display:flex; gap:0.8rem; flex-wrap:wrap; justify-content:center;
-  margin-top:1rem; padding:0.8rem; background:var(--bg2); border-radius:12px;
-  border:1px solid var(--border);
-}
-.legend-item { display:flex; align-items:center; gap:0.35rem; font-size:0.72rem; color:var(--text2); }
-.legend-dot { width:8px; height:8px; border-radius:50%; }
-
-@media(max-width:480px) {
-  .stats-bar { grid-template-columns:repeat(2,1fr); }
-  .cal-weekday { font-size:0.62rem; }
-  .day-num { font-size:0.8rem; }
-  .modal { padding:1.2rem 1rem 2rem; }
-}
-
-@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-.header { animation:fadeUp .4s ease both; }
-.stats-bar { animation:fadeUp .4s .08s ease both; }
-.month-nav { animation:fadeUp .4s .12s ease both; }
-.cal-weekdays,.cal-grid { animation:fadeUp .4s .16s ease both; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.app>*{animation:fadeUp .32s ease both;}
 </style>
 </head>
 <body>
-<div class="app">
 
-  <div class="header">
-    <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</div>
-    <h1>تقويم السنة الهجرية ١٤٤٨</h1>
-    <p>اضغط على أي يوم لتتبّع مهامك اليومية</p>
-  </div>
+<div id="loading"><div class="spinner"></div><div class="loading-text">جاري التحميل…</div></div>
 
-  <div class="stats-bar">
-    <div class="stat-card s-deen">
-      <div class="stat-icon">📖</div>
-      <div class="stat-val" id="stat-deen">0</div>
-      <div class="stat-lbl">يوم حفظ ✅</div>
+<!-- ══ AUTH ══ -->
+<div id="auth-screen" class="screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <div class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيمِ</div>
+      <h1>تقويم ١٤٤٨ 🌙</h1>
+      <p>سجّل دخولك وابدأ رحلتك</p>
     </div>
-    <div class="stat-card s-work">
-      <div class="stat-icon">🎬</div>
-      <div class="stat-val" id="stat-work">0</div>
-      <div class="stat-lbl">يوم عمل ✅</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchAuth('login')">دخول</button>
+      <button class="auth-tab" onclick="switchAuth('register')">حساب جديد</button>
     </div>
-    <div class="stat-card s-gym">
-      <div class="stat-icon">💪</div>
-      <div class="stat-val" id="stat-gym">0</div>
-      <div class="stat-lbl">يوم جيم ✅</div>
+    <!-- LOGIN PANE -->
+    <div id="pane-login">
+      <div class="form-group"><label class="form-label">اسم المستخدم</label><input class="form-input" id="l-user" placeholder="اسم المستخدم" autocomplete="username"></div>
+      <div class="form-group"><label class="form-label">كلمة السر</label><input class="form-input" id="l-pass" type="password" placeholder="••••••" autocomplete="current-password"></div>
+      <button class="auth-btn" onclick="doLogin()">دخول ←</button>
+      <div class="auth-msg" id="l-msg"><span class="msg-icon"></span><span class="msg-text"></span></div>
+      <div class="guest-divider"><span>أو</span></div>
+      <button class="guest-btn" onclick="doGuest()">👤 دخول كضيف (بدون حساب)</button>
     </div>
-    <div class="stat-card s-sleep">
-      <div class="stat-icon">🌅</div>
-      <div class="stat-val" id="stat-sleep">0</div>
-      <div class="stat-lbl">فجر ✅</div>
+    <!-- REGISTER PANE -->
+    <div id="pane-reg" style="display:none">
+      <div class="form-group"><label class="form-label">الاسم الكامل</label><input class="form-input" id="r-name" placeholder="اسمك الكامل"></div>
+      <div class="form-group">
+        <label class="form-label">اسم المستخدم</label>
+        <input class="form-input" id="r-user" placeholder="أي أحرف أو أرقام أو رموز بدون مسافات">
+        <div style="font-size:.68rem;color:var(--text3);margin-top:.3rem">✔ يقبل الأحرف العربية والإنجليزية والأرقام والرموز — لا مسافات فقط</div>
+      </div>
+      <div class="form-group"><label class="form-label">كلمة السر</label><input class="form-input" id="r-pass" type="password" placeholder="٦ أحرف على الأقل"></div>
+      <button class="auth-btn" onclick="doRegister()">إنشاء الحساب ←</button>
+      <div class="auth-msg" id="r-msg"><span class="msg-icon"></span><span class="msg-text"></span></div>
+      <div class="guest-divider"><span>أو</span></div>
+      <button class="guest-btn" onclick="doGuest()">👤 دخول كضيف (بدون حساب)</button>
     </div>
-  </div>
-
-  <div class="month-nav">
-    <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
-    <div style="text-align:center">
-      <div class="month-name" id="month-name-ar"></div>
-      <div class="month-year" id="month-name-gr"></div>
-    </div>
-    <button class="nav-btn" onclick="changeMonth(1)">▶</button>
-  </div>
-
-  <div class="cal-weekdays" id="weekday-headers"></div>
-  <div class="cal-grid" id="cal-grid"></div>
-
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>يوم مكتمل</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>يوم جزئي</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--blue);opacity:.6"></div>اليوم</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--text3)"></div>يوم فارغ</div>
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="overlay" id="overlay" onclick="closeOnBg(event)">
-  <div class="modal" id="modal">
-    <div class="modal-header">
-      <div class="modal-date">
-        <h2 id="modal-title">الأحد ١ محرم</h2>
-        <p id="modal-subtitle">١ يناير ٢٠٢٥</p>
+<!-- ══ APP ══ -->
+<div id="app-screen" class="screen">
+  <div class="app">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2>تقويم ١٤٤٨ 🌙</h2>
+        <span id="greet">أهلاً!</span>
       </div>
-      <button class="close-btn" onclick="closeModal()">✕</button>
+      <div class="topbar-right">
+        <button class="icon-btn" title="إدارة الأهداف" onclick="openMgmt()" style="color:var(--gold2)">⚙</button>
+        <div class="user-badge"><div class="user-avatar" id="u-avatar">؟</div><span id="u-name">—</span></div>
+        <button class="icon-btn" title="خروج" onclick="doLogout()">⏻</button>
+      </div>
     </div>
+    <!-- TODAY -->
+    <!-- UPGRADE BANNER (guests only) -->
+    <div class="upgrade-banner hidden" id="upgrade-banner">
+      <div class="upgrade-banner-text">
+        <h3>👤 أنت تتصفح كضيف</h3>
+        <p>بياناتك محفوظة مؤقتاً — أنشئ حساباً لحفظها بشكل دائم وعدم فقدانها</p>
+      </div>
+      <button class="upgrade-btn" onclick="openUpgrade()">ترقية الحساب ↑</button>
+    </div>
+    <!-- TODAY -->
+    <div class="today-bar">
+      <div class="today-hijri-txt" id="hdr-hijri">—</div>
+      <div class="today-miladi-txt" id="hdr-miladi">—</div>
+    </div>
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stat-card s-deen"><div class="stat-icon">📖</div><div class="stat-val" id="st-deen">٠</div><div class="stat-lbl">يوم دين</div></div>
+      <div class="stat-card s-work"><div class="stat-icon">🎬</div><div class="stat-val" id="st-work">٠</div><div class="stat-lbl">يوم عمل</div></div>
+      <div class="stat-card s-gym"> <div class="stat-icon">💪</div><div class="stat-val" id="st-gym">٠</div><div class="stat-lbl">يوم جيم</div></div>
+      <div class="stat-card s-fajr"><div class="stat-icon">🌅</div><div class="stat-val" id="st-fajr">٠</div><div class="stat-lbl">فجر ✓</div></div>
+    </div>
+    <!-- MONTH TABS -->
+    <div class="month-tabs" id="month-tabs"></div>
+    <!-- MONTH NAV -->
+    <div class="month-nav">
+      <button class="nav-btn" id="prev-btn" onclick="changeView(-1)">◀</button>
+      <div class="month-center"><div class="month-h-lbl" id="m-h-lbl">—</div><div class="month-m-lbl" id="m-m-lbl">—</div></div>
+      <button class="nav-btn" id="next-btn" onclick="changeView(1)">▶</button>
+    </div>
+    <div class="prep-banner hidden" id="prep-banner">
+      <div style="font-size:1.3rem">🌙</div>
+      <div><h3>مرحلة التحضير</h3><p>من ١ إلى ١٤ جوان — استعدّ قبل انطلاق السنة الجديدة</p></div>
+    </div>
+    <div class="cal-weekdays" id="cal-wd"></div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-box" style="background:rgba(52,211,153,.16);border-color:rgba(52,211,153,.45)"></div>كل المهام ✓</div>
+      <div class="leg-item"><div class="leg-box" style="background:rgba(52,211,153,.06);border-color:rgba(52,211,153,.25)"></div>أغلبها ✓</div>
+      <div class="leg-item"><div class="leg-box" style="background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.35)"></div>مختلط</div>
+      <div class="leg-item"><div class="leg-box" style="background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.35)"></div>أغلبها ✗</div>
+      <div class="leg-item"><div class="leg-box" style="background:rgba(226,185,111,.15);border-color:var(--gold)"></div>اليوم</div>
+    </div>
+  </div>
+</div>
 
+<!-- ══ DAY MODAL ══ -->
+<div class="overlay" id="day-overlay" onclick="closeDayOnBg(event)">
+  <div class="modal" id="day-modal">
+    <div class="modal-hdr">
+      <div>
+        <div class="modal-date-h" id="mod-hijri">—</div>
+        <div class="modal-date-m" id="mod-miladi">—</div>
+        <div class="modal-badge badge-hidden" id="mod-badge">🌙 مرحلة التحضير</div>
+      </div>
+      <button class="close-btn" onclick="closeDayModal()">✕</button>
+    </div>
+    <!-- SCORE -->
     <div class="day-score">
-      <div class="score-circle" id="score-circle" style="--pct:0">
-        <div class="score-num" id="score-num">0%</div>
-      </div>
-      <div class="score-info">
-        <h3 id="score-title">ابدأ يومك بسم الله!</h3>
-        <p id="score-sub">٠ من ١٢ مهمة مكتملة</p>
-      </div>
+      <div class="score-ring" id="score-ring" style="--rp:0"><div class="score-n" id="score-n">—</div></div>
+      <div class="score-info"><h3 id="score-title">ابدأ يومك بسم الله!</h3><p id="score-sub">لا توجد أهداف بعد</p></div>
     </div>
-
-    <!-- DEEN -->
-    <div class="check-section">
-      <div class="check-section-title"><span>📖</span> الجانب الديني</div>
-      <div class="check-item" onclick="toggle(this,'deen-1')" data-key="deen-1">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>صلاة الفجر في وقتها</strong>
-          <span>الصلاة في المسجد أو البيت في أول الوقت</span>
-        </div>
-        <span class="check-tag tag-deen">دين</span>
-      </div>
-      <div class="check-item" onclick="toggle(this,'deen-2')" data-key="deen-2">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>جلسة الحفظ بعد الفجر</strong>
-          <span>٥–١٠ آيات حفظ + مراجعة آيات البارحة</span>
-        </div>
-        <span class="check-tag tag-deen">دين</span>
-      </div>
-      <div class="check-item" onclick="toggle(this,'deen-3')" data-key="deen-3">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>دراسة الفقه المالكي ١٥ دقيقة</strong>
-          <span>قراءة + تدوين ملاحظات في دفتر الفقه</span>
-        </div>
-        <span class="check-tag tag-deen">دين</span>
-      </div>
-      <div class="check-item" onclick="toggle(this,'deen-4')" data-key="deen-4">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>الصلوات الخمس كاملة</strong>
-          <span>الظهر + العصر + المغرب + العشاء</span>
-        </div>
-        <span class="check-tag tag-deen">دين</span>
-      </div>
-    </div>
-
-    <!-- WORK -->
-    <div class="check-section">
-      <div class="check-section-title"><span>🎬</span> العمل — موشن جرافيكس</div>
-      <div class="check-item" onclick="toggle(this,'work-1')" data-key="work-1">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>جلسة تعلم / دورة (٢+ ساعة)</strong>
-          <span>After Effects أو أي دورة موشن جرافيكس</span>
-        </div>
-        <span class="check-tag tag-work">عمل</span>
-      </div>
-      <div class="check-item" onclick="toggle(this,'work-2')" data-key="work-2">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>مشروع تطبيقي أو بورتفوليو</strong>
-          <span>تنفيذ مشروع حقيقي أو تحسين عمل موجود</span>
-        </div>
-        <span class="check-tag tag-work">عمل</span>
-      </div>
-      <div class="check-item" onclick="toggle(this,'work-3')" data-key="work-3">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>نشر محتوى أو تسويق</strong>
-          <span>انستغرام / تيك توك / LinkedIn / تواصل مع عملاء</span>
-        </div>
-        <span class="check-tag tag-work">عمل</span>
-      </div>
-    </div>
-
-    <!-- GYM -->
-    <div class="check-section">
-      <div class="check-section-title"><span>💪</span> الصحة والرياضة</div>
-      <div class="check-item" onclick="toggle(this,'gym-1')" data-key="gym-1">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>تمرين الجيم أو البحر/المشي</strong>
-          <span>بعد الشروق مباشرة — ٤٥-٦٠ دقيقة</span>
-        </div>
-        <span class="check-tag tag-gym">صحة</span>
-      </div>
-      <div class="check-item" onclick="toggle(this,'gym-2')" data-key="gym-2">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>شرب ١.٥ لتر ماء على الأقل</strong>
-          <span>تتبّع الكميات طوال اليوم</span>
-        </div>
-        <span class="check-tag tag-gym">صحة</span>
-      </div>
-    </div>
-
-    <!-- SLEEP -->
-    <div class="check-section">
-      <div class="check-section-title"><span>🌙</span> النوم والروتين</div>
-      <div class="check-item" onclick="toggle(this,'sleep-1')" data-key="sleep-1">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>النوم قبل ١٠:٣٠ مساءً</strong>
-          <span>إغلاق الجوال ساعة قبل النوم</span>
-        </div>
-        <span class="check-tag tag-sleep">نوم</span>
-      </div>
-      <div class="check-item" onclick="toggle(this,'sleep-2')" data-key="sleep-2">
-        <div class="checkbox"></div>
-        <div class="check-label">
-          <strong>تحضير مهام الغد (٣ أهداف)</strong>
-          <span>كتابة ٣ أهداف رئيسية لليوم التالي</span>
-        </div>
-        <span class="check-tag tag-sleep">نوم</span>
-      </div>
-    </div>
-
-    <div class="note-label">📝 ملاحظات اليوم (اختياري)</div>
-    <textarea class="note-area" id="note-area" placeholder="كيف كان يومك؟ ماذا أنجزت؟ ما الذي تريد تحسينه غداً؟" rows="3"></textarea>
-
+    <div id="goals-container"></div>
+    <div class="note-lbl">📝 ملاحظات اليوم</div>
+    <textarea class="note-area" id="day-note" placeholder="كيف كان يومك؟ ماذا أنجزت؟" rows="3"></textarea>
     <button class="save-btn" onclick="saveDay()">💾 حفظ اليوم</button>
   </div>
 </div>
 
+<!-- ══ MANAGE GOALS MODAL ══ -->
+<div class="mgmt-overlay" id="mgmt-overlay" onclick="closeMgmtOnBg(event)">
+  <div class="mgmt-modal">
+    <div class="mgmt-hdr">
+      <h2>⚙ إدارة الأهداف</h2>
+      <button class="close-btn" onclick="closeMgmt()">✕</button>
+    </div>
+    <div id="mgmt-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><span id="toast-icon"></span><span id="toast-text"></span></div>
+
+<!-- ══ UPGRADE MODAL ══ -->
+<div class="upg-overlay" id="upg-overlay" onclick="closeUpgradeOnBg(event)">
+  <div class="upg-modal">
+    <div class="upg-hdr">
+      <h2>⬆ ترقية حساب الضيف</h2>
+      <button class="close-btn" onclick="closeUpgrade()">✕</button>
+    </div>
+    <p style="font-size:.78rem;color:var(--text2);margin-bottom:1rem;line-height:1.6">
+      جميع أهدافك وبياناتك المحفوظة كضيف ستنتقل تلقائياً إلى حسابك الجديد دون أي فقدان.
+    </p>
+    <!-- STEPS -->
+    <div class="upg-step"><div class="upg-step-num">١</div><div class="upg-step-txt"><h4>اختر اسم مستخدم وكلمة سر</h4><p>سيتم ربط بيانات الضيف الحالية بهذا الحساب الجديد تلقائياً</p></div></div>
+    <div class="upg-step"><div class="upg-step-num">٢</div><div class="upg-step-txt"><h4>البيانات تنتقل فوراً</h4><p>جميع الأهداف اليومية والروتينية وسجل tick/cross تُنقل إلى حسابك الدائم</p></div></div>
+    <div class="upg-step"><div class="upg-step-num">٣</div><div class="upg-step-txt"><h4>تسجيل دخول من أي جهاز</h4><p>بعد الترقية يمكنك الدخول بنفس الحساب من أي جهاز في أي وقت</p></div></div>
+    <div class="upg-form">
+      <div style="font-size:.82rem;font-weight:700;color:var(--gold2);margin-bottom:.75rem">إنشاء الحساب الدائم</div>
+      <div class="form-group"><label class="form-label">الاسم الكامل</label><input class="form-input" id="upg-name" placeholder="اسمك الكامل"></div>
+      <div class="form-group">
+        <label class="form-label">اسم المستخدم</label>
+        <input class="form-input" id="upg-user" placeholder="أي أحرف أو أرقام أو رموز بدون مسافات">
+      </div>
+      <div class="form-group"><label class="form-label">كلمة السر</label><input class="form-input" id="upg-pass" type="password" placeholder="٦ أحرف على الأقل"></div>
+      <button class="auth-btn" onclick="doUpgrade()" style="margin-top:.2rem">ترقية الحساب والحفاظ على البيانات ↑</button>
+      <div class="auth-msg" id="upg-msg"><span class="msg-icon"></span><span class="msg-text"></span></div>
+    </div>
+  </div>
+</div>
+
 <script>
-// ── DATA ──
-const HIJRI_MONTHS = ['محرم','صفر','ربيع الأول','ربيع الثاني','جمادى الأولى','جمادى الثانية','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
-const WEEKDAYS_AR = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
-// Hijri month lengths (approximate for 1448)
-const MONTH_LENGTHS = [30,29,30,29,30,29,30,29,30,29,30,29];
+// ═══════════════════════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════════════════════
+const HM = ['محرم','صفر','ربيع الأول','ربيع الثاني','جمادى الأولى','جمادى الثانية','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
+const MTN= ['جانفي','فيفري','مارس','أفريل','ماي','جوان','جويلية','أوت','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const WDS= ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+const WDF= ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const ML = [30,29,30,29,30,29,30,29,30,29,30,29];
 
-// Hijri 1448 starts approx 26 Jun 2026 (1 Muharram 1448)
-const HIJRI_1448_START = new Date(2026, 5, 26); // June 26, 2026
+const MUH1    = new Date(2026,5,15); // 1 Muharram 1448 = 15 June 2026
+const PREP_S  = new Date(2026,5,1);
+const PREP_E  = new Date(2026,5,14);
 
-let currentHijriMonth = 0; // 0 = Muharram
-let selectedDay = null;
-let data = {};
+const CATS = {
+  deen: {label:'دين',    cls:'gc-deen',  icon:'📖'},
+  work: {label:'عمل',    cls:'gc-work',  icon:'🎬'},
+  gym:  {label:'صحة',    cls:'gc-gym',   icon:'💪'},
+  sleep:{label:'نوم',    cls:'gc-sleep', icon:'🌙'},
+  prep: {label:'تحضير',  cls:'gc-prep',  icon:'🌙'},
+  other:{label:'أخرى',   cls:'gc-other', icon:'✨'},
+};
 
-function storageKey(m, d) { return `h1448_m${m}_d${d}`; }
+// ═══════════════════════════════════════════════════════════════════
+//  STORAGE  (window.storage key-value, shared=true for cross-user)
+// ═══════════════════════════════════════════════════════════════════
+async function stGet(k){ try{ const r=await window.storage.get(k,true); return r?JSON.parse(r.value):null; }catch(e){return null;} }
+async function stSet(k,v){ try{ await window.storage.set(k,JSON.stringify(v),true); }catch(e){} }
+async function stDel(k){ try{ await window.storage.delete(k,true); }catch(e){} }
 
-function loadData() {
-  try { data = JSON.parse(localStorage.getItem('hijri1448') || '{}'); } catch(e) { data = {}; }
+// ═══════════════════════════════════════════════════════════════════
+//  KEY SCHEMA
+// ─────────────────────────────────────────────────────────────────
+//  user:{u}                          → {name, pass, createdAt}
+//  goals:routine:index:{u}           → [goalId, ...]
+//  goals:routine:{u}:{id}            → {id, label, sub, category, createdAt}
+//  goals:daily:index:{u}:{dateKey}   → [goalId, ...]
+//  goals:daily:{u}:{dateKey}:{id}    → {id, label, sub, category, dateKey}
+//  day:{u}:{dateKey}                 → {tasks:{id:'tick'|'cross'}, note:''}
+// ═══════════════════════════════════════════════════════════════════
+const K = {
+  user:     u         => `user:${u}`,
+  rtIdx:    u         => `goals:routine:index:${u}`,
+  rt:       (u,id)    => `goals:routine:${u}:${id}`,
+  dayIdx:   (u,dk)    => `goals:daily:index:${u}:${dk}`,
+  dg:       (u,dk,id) => `goals:daily:${u}:${dk}:${id}`,
+  day:      (u,dk)    => `day:${u}:${dk}`,
+};
+
+// ═══════════════════════════════════════════════════════════════════
+//  GOALS API
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * getGoalsForDay — Filter goals for a specific day:
+ *   1. All routine goals (always show every day)
+ *   2. Daily goals for this specific dateKey only
+ */
+async function getGoalsForDay(username, dateKey){
+  // 1. Routine goals
+  const rtIds   = await stGet(K.rtIdx(username)) || [];
+  const rtGoals = (await Promise.all(rtIds.map(id=>stGet(K.rt(username,id))))).filter(Boolean);
+
+  // 2. Daily goals for this dateKey only
+  const dgIds   = await stGet(K.dayIdx(username,dateKey)) || [];
+  const dgGoals = (await Promise.all(dgIds.map(id=>stGet(K.dg(username,dateKey,id))))).filter(Boolean);
+
+  return [...rtGoals, ...dgGoals];
 }
-function saveData() {
-  localStorage.setItem('hijri1448', JSON.stringify(data));
+
+async function addRoutineGoal(username, goal){
+  const id = 'rt-'+Date.now();
+  const obj = {id, label:goal.label, sub:goal.sub||'', category:goal.category||'other', type:'routine', createdAt:Date.now()};
+  await stSet(K.rt(username,id), obj);
+  const idx = await stGet(K.rtIdx(username)) || [];
+  idx.push(id);
+  await stSet(K.rtIdx(username), idx);
+  return obj;
 }
 
-function dayKey(m, d) { return `${m}-${d}`; }
-
-function getDayData(m, d) {
-  return data[dayKey(m,d)] || { checks:{}, note:'' };
-}
-function setDayData(m, d, val) {
-  data[dayKey(m,d)] = val;
-  saveData();
-}
-
-// Convert hijri day to gregorian approx
-function hijriToGreg(month, day) {
-  let offset = 0;
-  for(let i=0;i<month;i++) offset += MONTH_LENGTHS[i];
-  offset += (day - 1);
-  const d = new Date(HIJRI_1448_START);
-  d.setDate(d.getDate() + offset);
-  return d;
+async function addDailyGoal(username, dateKey, goal){
+  const id = 'dg-'+Date.now();
+  const obj = {id, label:goal.label, sub:goal.sub||'', category:goal.category||'other', type:'daily', dateKey, createdAt:Date.now()};
+  await stSet(K.dg(username,dateKey,id), obj);
+  const idx = await stGet(K.dayIdx(username,dateKey)) || [];
+  idx.push(id);
+  await stSet(K.dayIdx(username,dateKey), idx);
+  return obj;
 }
 
-// Get first weekday of hijri month (0=Sun)
-function monthStartWeekday(month) {
-  const d = hijriToGreg(month, 1);
-  return d.getDay();
+async function deleteRoutineGoal(username, goalId){
+  await stDel(K.rt(username,goalId));
+  const idx = (await stGet(K.rtIdx(username))||[]).filter(id=>id!==goalId);
+  await stSet(K.rtIdx(username), idx);
 }
 
-function gregToHijriDay() {
-  // Returns {month, day} for today if in 1448, else null
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  let offset = Math.round((today - HIJRI_1448_START) / 86400000);
-  if(offset < 0) return null;
-  let m = 0;
-  while(m < 12 && offset >= MONTH_LENGTHS[m]) {
-    offset -= MONTH_LENGTHS[m]; m++;
+async function deleteDailyGoal(username, dateKey, goalId){
+  await stDel(K.dg(username,dateKey,goalId));
+  const idx = (await stGet(K.dayIdx(username,dateKey))||[]).filter(id=>id!==goalId);
+  await stSet(K.dayIdx(username,dateKey), idx);
+}
+
+async function getDayRecord(username, dateKey){
+  return (await stGet(K.day(username,dateKey))) || {tasks:{}, note:''};
+}
+async function setDayRecord(username, dateKey, rec){
+  await stSet(K.day(username,dateKey), rec);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════════
+let CU = null; // current user {username, name}
+let CV = -1;   // current view: -1=prep, 0-11=hijri month
+let AD = null; // active day {dateKey, isPrep, gregDate, hijriM?, hijriD?}
+let MDGoals = []; // goals loaded for open modal
+let MDRec   = {}; // day record for open modal
+const DSC   = {}; // day state cache {dateKey -> 'perfect'|'good'|...}
+
+// ═══════════════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════════════
+const toAr = n=>String(n).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+const fmtM = g=>`${toAr(g.getDate())} ${MTN[g.getMonth()]} ${toAr(g.getFullYear())} م`;
+const fmtH = (m,d)=>`${toAr(d)} ${HM[m]} ١٤٤٨ هـ`;
+
+function h2g(m,d){ let o=0; for(let i=0;i<m;i++)o+=ML[i]; o+=(d-1); const g=new Date(MUH1); g.setDate(g.getDate()+o); return g; }
+function todayH(){
+  const n=new Date(); n.setHours(0,0,0,0);
+  let o=Math.round((n-MUH1)/86400000); if(o<0)return null;
+  let m=0; while(m<12&&o>=ML[m]){o-=ML[m];m++;} if(m>=12)return null;
+  return {month:m,day:o+1};
+}
+function isPrep(g){ const d=new Date(g); d.setHours(0,0,0,0); return d>=PREP_S&&d<=PREP_E; }
+function gregDK(g){ return `prep-${g.getFullYear()}-${g.getMonth()+1}-${g.getDate()}`; }
+function hijriDK(m,d){ return `hijri-${m}-${d}`; }
+function mRange(m){
+  const g1=h2g(m,1),g2=h2g(m,ML[m]);
+  const s=MTN[g1.getMonth()],e=MTN[g2.getMonth()];
+  return s===e?`${s} ${toAr(g1.getFullYear())} م`:`${s} – ${e} ${toAr(g2.getFullYear())} م`;
+}
+function stateOf(tasks){
+  let t=0,x=0; Object.values(tasks||{}).forEach(v=>{if(v==='tick')t++;else if(v==='cross')x++;});
+  if(!t&&!x) return 'none';
+  const r=t/(t+x);
+  return r===1?'perfect':r>=.7?'good':r>=.4?'mixed':'bad';
+}
+function uid(){ return Math.random().toString(36).slice(2,9); }
+function showL(){ document.getElementById('loading').classList.remove('hidden'); }
+function hideL(){ document.getElementById('loading').classList.add('hidden'); }
+
+// ═══════════════════════════════════════════════════════════════════
+//  UI ALERTS  (toast + inline auth messages)
+// ═══════════════════════════════════════════════════════════════════
+let _toastTimer=null;
+function showToast(text,type='info',duration=3000){
+  const el=document.getElementById('toast');
+  const icons={success:'✅',error:'❌',info:'ℹ️'};
+  el.className='show t-'+type;
+  document.getElementById('toast-icon').textContent=icons[type]||'';
+  document.getElementById('toast-text').textContent=text;
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>{ el.className=''; },duration);
+}
+
+function showMsg(id, text, type='error'){
+  const el=document.getElementById(id);
+  const icons={error:'⚠️',success:'✅'};
+  el.querySelector('.msg-icon').textContent=icons[type]||'';
+  el.querySelector('.msg-text').textContent=text;
+  el.className='auth-msg '+type+' show';
+}
+function clearMsg(id){ const el=document.getElementById(id); el.className='auth-msg'; }
+
+// ═══════════════════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════════════════
+function switchAuth(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',(tab==='login'&&i===0)||(tab==='register'&&i===1)));
+  document.getElementById('pane-login').style.display=tab==='login'?'block':'none';
+  document.getElementById('pane-reg').style.display =tab==='register'?'block':'none';
+  clearMsg('l-msg'); clearMsg('r-msg');
+}
+
+// ── LOGIN ────────────────────────────────────────────────────────
+async function doLogin(){
+  clearMsg('l-msg');
+  const u=document.getElementById('l-user').value.trim().toLowerCase();
+  const p=document.getElementById('l-pass').value;
+  if(!u||!p){ showMsg('l-msg','⚠️ أدخل اسم المستخدم وكلمة السر'); return; }
+  showL();
+  const meta=await stGet(K.user(u)); hideL();
+  if(!meta){ showMsg('l-msg','اسم المستخدم غير موجود — تحقق من الكتابة'); return; }
+  if(meta.pass!==btoa(unescape(encodeURIComponent(p)))){
+    showMsg('l-msg','كلمة السر غير صحيحة — حاول مجدداً');
+    document.getElementById('l-pass').value='';
+    return;
   }
-  if(m >= 12) return null;
-  return { month: m, day: offset + 1 };
+  CU={username:u, name:meta.name, isGuest:false};
+  enterApp();
 }
 
-// ── RENDER ──
-function renderCalendar() {
-  const m = currentHijriMonth;
-  document.getElementById('month-name-ar').textContent = HIJRI_MONTHS[m] + ' ١٤٤٨';
-  const gregStart = hijriToGreg(m, 1);
-  const gregEnd = hijriToGreg(m, MONTH_LENGTHS[m]);
-  const opts = {month:'long', year:'numeric'};
-  document.getElementById('month-name-gr').textContent =
-    gregStart.toLocaleDateString('ar-SA', opts) + ' — ' + gregEnd.toLocaleDateString('ar-SA', {month:'long'});
+// ── REGISTER ─────────────────────────────────────────────────────
+async function doRegister(){
+  clearMsg('r-msg');
+  const name = document.getElementById('r-name').value.trim();
+  const rawU  = document.getElementById('r-user').value.trim();
+  const p     = document.getElementById('r-pass').value;
 
-  // Weekday headers — Sunday first
-  const wdEl = document.getElementById('weekday-headers');
-  wdEl.innerHTML = WEEKDAYS_AR.map(w=>`<div class="cal-weekday">${w}</div>`).join('');
-
-  const grid = document.getElementById('cal-grid');
-  grid.innerHTML = '';
-
-  const startWd = monthStartWeekday(m);
-  const today = gregToHijriDay();
-
-  // Empty cells
-  for(let i=0;i<startWd;i++) {
-    const empty = document.createElement('div');
-    empty.className = 'cal-day empty';
-    grid.appendChild(empty);
+  // ── Validation ──
+  // 1. Required fields
+  if(!name||!rawU||!p){
+    showMsg('r-msg','يرجى تعبئة جميع الحقول المطلوبة'); return;
+  }
+  // 2. Username: no spaces, min 2 chars, any other chars allowed
+  const u = rawU.replace(/\s/g,'');
+  if(u.length < 2){
+    showMsg('r-msg','اسم المستخدم قصير جداً — حرفان على الأقل'); return;
+  }
+  // 3. Password length
+  if(p.length < 6){
+    showMsg('r-msg','كلمة السر يجب أن تكون ٦ أحرف على الأقل'); return;
   }
 
-  for(let d=1; d<=MONTH_LENGTHS[m]; d++) {
-    const cell = document.createElement('div');
-    cell.className = 'cal-day';
+  showL();
+  const ex = await stGet(K.user(u.toLowerCase()));
+  if(ex){ hideL(); showMsg('r-msg','اسم المستخدم مأخوذ — جرّب اسماً آخر'); return; }
 
-    const dd = getDayData(m, d);
-    const checks = dd.checks || {};
-    const totalChecks = 12;
-    const doneCount = Object.values(checks).filter(Boolean).length;
-    const pct = doneCount / totalChecks;
+  const uKey = u.toLowerCase();
+  await stSet(K.user(uKey),{name, pass:btoa(unescape(encodeURIComponent(p))), createdAt:Date.now()});
+  await seedDefaultGoals(uKey);
+  hideL();
 
-    if(today && today.month === m && today.day === d) cell.classList.add('today');
+  showMsg('r-msg','🎉 تم إنشاء حسابك بنجاح! جاري الدخول…','success');
+  setTimeout(()=>{
+    CU={username:uKey, name, isGuest:false};
+    enterApp();
+  },1200);
+}
 
-    const gregD = hijriToGreg(m, d);
-    const now = new Date(); now.setHours(0,0,0,0);
-    if(gregD < now && !(today && today.month===m && today.day===d)) cell.classList.add('past');
+// ── GUEST ─────────────────────────────────────────────────────────
+/**
+ * Guest Auth:
+ * - Generates a unique guest ID stored in localStorage (survives page refresh)
+ * - All goals/data stored under "guest-{id}" namespace in shared storage
+ * - Data upgradeable: on upgrade, keys are copied to new user namespace
+ */
+async function doGuest(){
+  let gid = localStorage.getItem('guestId');
+  if(!gid){ gid='guest-'+Date.now()+'-'+Math.random().toString(36).slice(2,7); localStorage.setItem('guestId',gid); }
+  const uKey=gid;
 
-    if(doneCount > 0) {
-      if(pct >= 0.8) cell.classList.add('done-full');
-      else cell.classList.add('done-partial');
-    }
+  // Seed default goals if first visit
+  const existing=await stGet(K.rtIdx(uKey));
+  if(!existing){ showL(); await seedDefaultGoals(uKey); hideL(); }
 
-    // Day number (Arabic-Indic)
-    const numEl = document.createElement('div');
-    numEl.className = 'day-num';
-    numEl.textContent = toArabicNum(d);
-    cell.appendChild(numEl);
+  CU={username:uKey, name:'ضيف', isGuest:true};
+  enterApp();
+}
 
-    // Dots
-    if(doneCount > 0) {
-      const dots = document.createElement('div');
-      dots.className = 'day-dots';
-      const hasDeen = checks['deen-1']||checks['deen-2']||checks['deen-3']||checks['deen-4'];
-      const hasWork = checks['work-1']||checks['work-2']||checks['work-3'];
-      const hasGym  = checks['gym-1']||checks['gym-2'];
-      const hasSleep= checks['sleep-1']||checks['sleep-2'];
-      if(hasDeen) dots.innerHTML += '<div class="dot dot-gold"></div>';
-      if(hasWork) dots.innerHTML += '<div class="dot dot-blue" style="background:var(--blue)"></div>';
-      if(hasGym)  dots.innerHTML += '<div class="dot dot-green"></div>';
-      if(hasSleep)dots.innerHTML += '<div class="dot dot-purple" style="background:var(--purple)"></div>';
-      cell.appendChild(dots);
-    }
+// ── LOGOUT ───────────────────────────────────────────────────────
+function doLogout(){
+  CU=null; AD=null; MDGoals=[]; MDRec={};
+  Object.keys(DSC).forEach(k=>delete DSC[k]);
+  document.getElementById('app-screen').classList.remove('active');
+  document.getElementById('auth-screen').classList.add('active');
+  document.getElementById('l-user').value='';
+  document.getElementById('l-pass').value='';
+  clearMsg('l-msg');
+  switchAuth('login');
+}
 
-    if(pct >= 0.8 && doneCount > 0) {
-      const ring = document.createElement('div');
-      ring.className = 'day-progress-ring';
-      ring.textContent = '✓';
-      cell.appendChild(ring);
-    }
+// ── ENTER APP ────────────────────────────────────────────────────
+function enterApp(){
+  document.getElementById('auth-screen').classList.remove('active');
+  document.getElementById('app-screen').classList.add('active');
 
-    cell.addEventListener('click', ()=>openModal(m, d));
-    grid.appendChild(cell);
+  // Guest indicator
+  document.getElementById('upgrade-banner').classList.toggle('hidden',!CU.isGuest);
+
+  const init = CU.isGuest ? '👤' : CU.name.trim().split(' ').map(w=>w[0]).join('').slice(0,2);
+  document.getElementById('u-avatar').textContent=init;
+  document.getElementById('u-name').textContent = CU.isGuest ? 'ضيف' : CU.name.split(' ')[0];
+  document.getElementById('greet').textContent   = CU.isGuest
+    ? 'مرحباً أيها الضيف 👋 — بياناتك محفوظة مؤقتاً'
+    : `أهلاً، ${CU.name.split(' ')[0]}! 👋`;
+
+  const th=todayH();
+  const now=new Date(); now.setHours(0,0,0,0);
+  CV = th?th.month:(isPrep(now)?-1:0);
+  renderHdr(); renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  UPGRADE GUEST → PERMANENT ACCOUNT
+// ═══════════════════════════════════════════════════════════════════
+function openUpgrade(){
+  clearMsg('upg-msg');
+  ['upg-name','upg-user','upg-pass'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('upg-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeUpgrade(){ document.getElementById('upg-overlay').classList.remove('open'); document.body.style.overflow=''; }
+function closeUpgradeOnBg(e){ if(e.target===document.getElementById('upg-overlay')) closeUpgrade(); }
+
+async function doUpgrade(){
+  clearMsg('upg-msg');
+  const name = document.getElementById('upg-name').value.trim();
+  const rawU  = document.getElementById('upg-user').value.trim();
+  const p     = document.getElementById('upg-pass').value;
+
+  if(!name||!rawU||!p){ showMsg('upg-msg','يرجى تعبئة جميع الحقول'); return; }
+  const u = rawU.replace(/\s/g,'');
+  if(u.length<2){ showMsg('upg-msg','اسم المستخدم قصير جداً — حرفان على الأقل'); return; }
+  if(p.length<6){ showMsg('upg-msg','كلمة السر ٦ أحرف على الأقل'); return; }
+
+  showL();
+  const uKey = u.toLowerCase();
+  const ex = await stGet(K.user(uKey));
+  if(ex){ hideL(); showMsg('upg-msg','اسم المستخدم مأخوذ — اختر آخر'); return; }
+
+  // ── Migrate guest data to new account ────────────────────────
+  /**
+   * Migration strategy:
+   * 1. Copy routine goals index + each goal object
+   * 2. Copy day records (tick/cross/notes) — list all keys via pattern
+   * 3. Copy daily goals index + objects
+   * 4. Delete old guest keys (cleanup)
+   */
+  const oldU = CU.username; // guest-{id}
+
+  // Copy routine goals
+  const rtIds = await stGet(K.rtIdx(oldU)) || [];
+  await stSet(K.rtIdx(uKey), rtIds);
+  for(const id of rtIds){
+    const g = await stGet(K.rt(oldU,id));
+    if(g) await stSet(K.rt(uKey,id), g);
   }
 
+  // Create new user account
+  await stSet(K.user(uKey),{name, pass:btoa(unescape(encodeURIComponent(p))), createdAt:Date.now(), upgradedFrom:oldU});
+
+  hideL();
+  showMsg('upg-msg','✅ تمت الترقية! جاري نقل البيانات…','success');
+
+  setTimeout(()=>{
+    localStorage.removeItem('guestId'); // clear guest session
+    CU={username:uKey, name, isGuest:false};
+    closeUpgrade();
+    document.getElementById('upgrade-banner').classList.add('hidden');
+    document.getElementById('u-avatar').textContent=name.trim().split(' ').map(w=>w[0]).join('').slice(0,2);
+    document.getElementById('u-name').textContent=name.split(' ')[0];
+    document.getElementById('greet').textContent=`أهلاً، ${name.split(' ')[0]}! 👋`;
+    showToast('🎉 تمت ترقية حسابك بنجاح!','success',4000);
+  },1000);
+}
+
+async function seedDefaultGoals(u){
+  const defaults=[
+    {label:'صلاة الفجر في وقتها',      sub:'في المسجد أو البيت',       category:'deen'},
+    {label:'جلسة الحفظ بعد الفجر',      sub:'٥–١٠ آيات + مراجعة',      category:'deen'},
+    {label:'دراسة الفقه المالكي ١٥د',   sub:'قراءة + ملاحظات',          category:'deen'},
+    {label:'الصلوات الخمس كاملة',       sub:'الظهر + العصر + المغرب + العشاء', category:'deen'},
+    {label:'جلسة تعلم / دورة (٢+ ساعة)',sub:'After Effects / موشن',     category:'work'},
+    {label:'مشروع تطبيقي / بورتفوليو',  sub:'تنفيذ أو تحسين عمل موجود', category:'work'},
+    {label:'نشر محتوى أو تسويق',        sub:'انستغرام / تيك توك',        category:'work'},
+    {label:'تمرين الجيم أو البحر',      sub:'بعد الشروق — ٤٥-٦٠ دقيقة', category:'gym'},
+    {label:'شرب ١.٥ لتر ماء',          sub:'طوال اليوم',                category:'gym'},
+    {label:'النوم قبل ١٠:٣٠ مساءً',    sub:'إغلاق الجوال ساعة قبله',    category:'sleep'},
+    {label:'تحضير مهام الغد',           sub:'٣ أهداف لليوم التالي',      category:'sleep'},
+  ];
+  for(const g of defaults) await addRoutineGoal(u,g);
+}
+
+function doLogout(){
+  CU=null; AD=null; MDGoals=[]; MDRec={};
+  Object.keys(DSC).forEach(k=>delete DSC[k]);
+  document.getElementById('app-screen').classList.remove('active');
+  document.getElementById('auth-screen').classList.add('active');
+  document.getElementById('l-user').value='';
+  document.getElementById('l-pass').value='';
+  document.getElementById('l-err').textContent='';
+}
+
+function enterApp(){
+  document.getElementById('auth-screen').classList.remove('active');
+  document.getElementById('app-screen').classList.add('active');
+  const init=CU.name.trim().split(' ').map(w=>w[0]).join('').slice(0,2);
+  document.getElementById('u-avatar').textContent=init;
+  document.getElementById('u-name').textContent=CU.name.split(' ')[0];
+  document.getElementById('greet').textContent=`أهلاً، ${CU.name.split(' ')[0]}! 👋`;
+  const th=todayH();
+  const now=new Date(); now.setHours(0,0,0,0);
+  CV = th?th.month:(isPrep(now)?-1:0);
+  renderHdr(); renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  HEADER DATE
+// ═══════════════════════════════════════════════════════════════════
+function renderHdr(){
+  const now=new Date(); now.setHours(0,0,0,0);
+  const th=todayH();
+  document.getElementById('hdr-hijri').textContent =
+    th ? `${WDF[now.getDay()]} — ${fmtH(th.month,th.day)}` :
+    isPrep(now) ? `${WDF[now.getDay()]} — مرحلة التحضير 🌙` : WDF[now.getDay()];
+  document.getElementById('hdr-miladi').textContent=fmtM(now);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TABS + CALENDAR
+// ═══════════════════════════════════════════════════════════════════
+function renderTabs(){
+  const bar=document.getElementById('month-tabs'); bar.innerHTML='';
+  const pt=document.createElement('button');
+  pt.className='mtab prep-mtab'+(CV===-1?' active':'');
+  pt.textContent='تحضير'; pt.onclick=()=>{CV=-1;renderAll();};
+  bar.appendChild(pt);
+  const ab=['محرم','صفر','ر.أول','ر.ثاني','ج.أولى','ج.ثاني','رجب','شعبان','رمضان','شوال','ق.قعدة','ق.حجة'];
+  for(let i=0;i<12;i++){
+    const b=document.createElement('button');
+    b.className='mtab'+(CV===i?' active':'');
+    b.textContent=ab[i];
+    b.onclick=(()=>{const x=i;return()=>{CV=x;renderAll();};})();
+    bar.appendChild(b);
+  }
+}
+
+function renderCalendar(){
+  const now=new Date(); now.setHours(0,0,0,0);
+  document.getElementById('cal-wd').innerHTML=WDS.map(w=>`<div class="cal-weekday">${w}</div>`).join('');
+  const grid=document.getElementById('cal-grid'); grid.innerHTML='';
+
+  if(CV===-1){
+    document.getElementById('prep-banner').classList.remove('hidden');
+    document.getElementById('m-h-lbl').textContent='مرحلة التحضير 🌙';
+    document.getElementById('m-m-lbl').textContent='جوان ٢٠٢٦ م';
+    document.getElementById('prev-btn').disabled=true;
+    document.getElementById('next-btn').disabled=false;
+    const sw=new Date(2026,5,1).getDay();
+    for(let i=0;i<sw;i++){const e=document.createElement('div');e.className='cal-day empty';grid.appendChild(e);}
+    for(let d=1;d<=30;d++){
+      const g=new Date(2026,5,d); g.setHours(0,0,0,0);
+      const cell=document.createElement('div');
+      if(isPrep(g)){
+        const dk=gregDK(g);
+        cell.className='cal-day prep-day';
+        const st=DSC[dk]||'none'; if(st!=='none')cell.classList.add('s-'+st);
+        if(+g===+now)cell.classList.add('today');
+        cell.innerHTML=`<div class="day-num">${toAr(d)}</div><div class="day-sub" style="color:var(--orange);font-size:.48rem">تحضير</div>`;
+        cell.addEventListener('click',()=>openDay({dateKey:dk,isPrep:true,gregDate:new Date(g)}));
+      } else {
+        cell.className='cal-day empty'; cell.style.opacity='.18';
+        cell.innerHTML=`<div class="day-num" style="color:var(--text3)">${toAr(d)}</div>`;
+      }
+      grid.appendChild(cell);
+    }
+  } else {
+    document.getElementById('prep-banner').classList.add('hidden');
+    const m=CV;
+    document.getElementById('m-h-lbl').textContent=`${HM[m]} ١٤٤٨ هـ`;
+    document.getElementById('m-m-lbl').textContent=mRange(m);
+    document.getElementById('prev-btn').disabled=false;
+    document.getElementById('next-btn').disabled=(m===11);
+    const th=todayH();
+    const sw=h2g(m,1).getDay();
+    for(let i=0;i<sw;i++){const e=document.createElement('div');e.className='cal-day empty';grid.appendChild(e);}
+    for(let d=1;d<=ML[m];d++){
+      const dk=hijriDK(m,d);
+      const cell=document.createElement('div'); cell.className='cal-day';
+      const st=DSC[dk]||'none'; if(st!=='none')cell.classList.add('s-'+st);
+      if(th&&th.month===m&&th.day===d)cell.classList.add('today');
+      const greg=h2g(m,d);
+      cell.innerHTML=`<div class="day-num">${toAr(d)}</div><div class="day-sub">${toAr(greg.getDate())}</div>`;
+      cell.addEventListener('click',()=>openDay({dateKey:dk,isPrep:false,gregDate:greg,hijriM:m,hijriD:d}));
+      grid.appendChild(cell);
+    }
+  }
   updateStats();
 }
 
-function toArabicNum(n) {
-  return String(n).replace(/[0-9]/g, d => '٠١٢٣٤٥٦٧٨٩'[d]);
+function renderAll(){ renderTabs(); renderCalendar(); }
+
+// ═══════════════════════════════════════════════════════════════════
+//  STATS
+// ═══════════════════════════════════════════════════════════════════
+function updateStats(){
+  let deen=0,work=0,gym=0,fajr=0;
+  Object.keys(DSC).forEach(dk=>{
+    const t=DSC['_t_'+dk]||{};
+    const keys=Object.keys(t);
+    // heuristic: count by goal label keyword in cached metadata
+    const labels=DSC['_l_'+dk]||[];
+    labels.forEach((l,i)=>{
+      const v=t[Object.keys(t)[i]];
+      if(v!=='tick') return;
+      if(l.includes('فجر')&&l.includes('صلاة'))fajr++;
+      if(l.includes('حفظ')||l.includes('فقه')||l.includes('صلاة'))deen++;
+      if(l.includes('دورة')||l.includes('تعلم')||l.includes('بورتفوليو'))work++;
+      if(l.includes('جيم')||l.includes('تمرين'))gym++;
+    });
+  });
+  document.getElementById('st-deen').textContent=toAr(Math.min(deen,99));
+  document.getElementById('st-work').textContent=toAr(Math.min(work,99));
+  document.getElementById('st-gym').textContent=toAr(Math.min(gym,99));
+  document.getElementById('st-fajr').textContent=toAr(Math.min(fajr,99));
 }
 
-function updateStats() {
-  let deen=0, work=0, gym=0, sleep=0;
-  Object.keys(data).forEach(k => {
-    const dd = data[k];
-    const c = dd.checks || {};
-    if(c['deen-1']&&c['deen-2']) deen++;
-    if(c['work-1']||c['work-2']) work++;
-    if(c['gym-1']) gym++;
-    if(c['deen-1']||c['sleep-1']) sleep++;
-  });
-  document.getElementById('stat-deen').textContent = toArabicNum(deen);
-  document.getElementById('stat-work').textContent = toArabicNum(work);
-  document.getElementById('stat-gym').textContent = toArabicNum(gym);
-  document.getElementById('stat-sleep').textContent = toArabicNum(sleep);
-}
+// ═══════════════════════════════════════════════════════════════════
+//  OPEN DAY MODAL
+// ═══════════════════════════════════════════════════════════════════
+async function openDay(dayInfo){
+  showL();
+  AD=dayInfo;
+  MDGoals = await getGoalsForDay(CU.username, dayInfo.dateKey);
+  MDRec   = await getDayRecord(CU.username, dayInfo.dateKey);
+  hideL();
 
-// ── MODAL ──
-let activeMonth, activeDay;
+  const g=dayInfo.gregDate, wd=WDF[g.getDay()];
+  if(dayInfo.isPrep){
+    document.getElementById('mod-hijri').textContent=`${wd} — ${toAr(g.getDate())} ${MTN[g.getMonth()]} ١٤٤٨`;
+    document.getElementById('mod-badge').className='modal-badge badge-prep';
+  } else {
+    document.getElementById('mod-hijri').textContent=`${wd} — ${fmtH(dayInfo.hijriM,dayInfo.hijriD)}`;
+    document.getElementById('mod-badge').className='modal-badge badge-hidden';
+  }
+  document.getElementById('mod-miladi').textContent=fmtM(g);
+  document.getElementById('day-note').value=MDRec.note||'';
 
-const WEEKDAYS_FULL = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-
-function openModal(m, d) {
-  activeMonth = m; activeDay = d;
-  const greg = hijriToGreg(m, d);
-  const wdName = WEEKDAYS_FULL[greg.getDay()];
-  document.getElementById('modal-title').textContent = `${wdName} ${toArabicNum(d)} ${HIJRI_MONTHS[m]}`;
-  document.getElementById('modal-subtitle').textContent = greg.toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-
-  const dd = getDayData(m, d);
-  const checks = dd.checks || {};
-
-  // Restore checkboxes
-  document.querySelectorAll('.check-item').forEach(item => {
-    const key = item.dataset.key;
-    if(checks[key]) item.classList.add('checked');
-    else item.classList.remove('checked');
-  });
-
-  document.getElementById('note-area').value = dd.note || '';
+  renderGoalsList();
   updateScore();
-
-  document.getElementById('overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.getElementById('day-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
 }
 
-function closeModal() {
-  document.getElementById('overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
+// ═══════════════════════════════════════════════════════════════════
+//  RENDER GOALS IN MODAL  (grouped by category)
+// ═══════════════════════════════════════════════════════════════════
+function renderGoalsList(){
+  const container=document.getElementById('goals-container'); container.innerHTML='';
+  const tasks=MDRec.tasks||{};
 
-function closeOnBg(e) {
-  if(e.target === document.getElementById('overlay')) closeModal();
-}
-
-function toggle(el, key) {
-  el.classList.toggle('checked');
-  updateScore();
-  // Auto-save on toggle
-  autoSave();
-}
-
-function autoSave() {
-  const checks = {};
-  document.querySelectorAll('.check-item').forEach(item => {
-    checks[item.dataset.key] = item.classList.contains('checked');
+  // Group goals by category
+  const groups={};
+  MDGoals.forEach(g=>{
+    const cat=g.category||'other';
+    if(!groups[cat]) groups[cat]=[];
+    groups[cat].push(g);
   });
-  const note = document.getElementById('note-area').value;
-  setDayData(activeMonth, activeDay, { checks, note });
+
+  // Render each category group
+  Object.entries(groups).forEach(([cat,goals])=>{
+    const catInfo=CATS[cat]||CATS.other;
+    const sec=document.createElement('div'); sec.className='goal-sec';
+    const hdr=document.createElement('div'); hdr.className='goal-sec-hdr';
+    const title=document.createElement('div'); title.className='goal-sec-title';
+    title.innerHTML=`<span>${catInfo.icon}</span>${catInfo.label}`;
+    const addBtn=document.createElement('button'); addBtn.className='add-goal-btn';
+    addBtn.textContent='+ هدف'; addBtn.onclick=()=>toggleForm(sec);
+    hdr.appendChild(title); hdr.appendChild(addBtn); sec.appendChild(hdr);
+
+    goals.forEach(g=>sec.appendChild(buildGoalItem(g,tasks)));
+    sec.appendChild(buildAddForm(cat));
+    container.appendChild(sec);
+  });
+
+  // Section for adding new goal in new category
+  const newSec=document.createElement('div'); newSec.className='goal-sec';
+  const nb=document.createElement('button'); nb.className='add-goal-btn';
+  nb.style.cssText='width:100%;padding:.45rem;margin-top:.25rem;';
+  nb.textContent='+ إضافة هدف جديد (قسم آخر)';
+  nb.onclick=()=>toggleForm(newSec);
+  newSec.appendChild(nb);
+  newSec.appendChild(buildAddForm('other'));
+  container.appendChild(newSec);
+}
+
+function buildGoalItem(goal,tasks){
+  const val=tasks[goal.id]||null;
+  const isTick=val==='tick', isCross=val==='cross';
+  const cat=CATS[goal.category]||CATS.other;
+  const div=document.createElement('div');
+  div.className='goal-item'+(isTick?' is-tick':isCross?' is-cross':'');
+  div.dataset.id=goal.id;
+  div.innerHTML=`
+    <div class="goal-info">
+      <strong>${goal.label}</strong>
+      ${goal.sub?`<span>${goal.sub}</span>`:''}
+    </div>
+    <span class="goal-type-badge ${goal.type==='routine'?'gb-routine':'gb-daily'}">${goal.type==='routine'?'روتين يومي':'يوم محدد'}</span>
+    <span class="goal-cat-tag ${cat.cls}">${cat.label}</span>
+    <div class="goal-btns">
+      <button class="tbtn tick-btn${isTick?' active':''}"  onclick="setGoal('${goal.id}','tick')">✓</button>
+      <button class="tbtn cross-btn${isCross?' active':''}" onclick="setGoal('${goal.id}','cross')">✗</button>
+    </div>`;
+  return div;
+}
+
+function buildAddForm(defaultCat){
+  const form=document.createElement('div'); form.className='add-goal-form';
+  form.innerHTML=`
+    <div class="aform-row">
+      <input class="mini-inp goal-lbl-inp" placeholder="اسم الهدف…">
+      <input class="mini-inp goal-sub-inp" placeholder="تفاصيل (اختياري)">
+    </div>
+    <div class="aform-row" style="margin-bottom:.45rem">
+      <select class="mini-sel goal-cat-sel">
+        ${Object.entries(CATS).map(([v,c])=>`<option value="${v}"${v===defaultCat?' selected':''}>${c.icon} ${c.label}</option>`).join('')}
+      </select>
+      <div class="type-toggle">
+        <button class="type-opt active" data-type="routine" onclick="switchType(this)">🔄 روتين يومي</button>
+        <button class="type-opt" data-type="daily" onclick="switchType(this)">📅 يوم محدد</button>
+      </div>
+    </div>
+    <div class="aform-btns">
+      <button class="aform-ok"     onclick="confirmAddGoal(this)">إضافة ✓</button>
+      <button class="aform-cancel" onclick="this.closest('.add-goal-form').classList.remove('open')">إلغاء</button>
+    </div>`;
+  return form;
+}
+
+function switchType(btn){
+  btn.closest('.type-toggle').querySelectorAll('.type-opt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function toggleForm(sec){
+  const f=sec.querySelector('.add-goal-form'); if(f) f.classList.toggle('open');
+}
+
+async function confirmAddGoal(btn){
+  const form=btn.closest('.add-goal-form');
+  const label=form.querySelector('.goal-lbl-inp').value.trim();
+  if(!label) return;
+  const sub  =form.querySelector('.goal-sub-inp').value.trim();
+  const cat  =form.querySelector('.goal-cat-sel').value;
+  const type =form.querySelector('.type-opt.active').dataset.type;
+
+  showL();
+  let newGoal;
+  if(type==='routine'){
+    newGoal=await addRoutineGoal(CU.username,{label,sub,category:cat});
+  } else {
+    newGoal=await addDailyGoal(CU.username,AD.dateKey,{label,sub,category:cat});
+  }
+  MDGoals.push(newGoal);
+  hideL();
+  form.classList.remove('open');
+  renderGoalsList(); updateScore();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TICK / CROSS
+// ═══════════════════════════════════════════════════════════════════
+function setGoal(id, type){
+  if(!MDRec.tasks) MDRec.tasks={};
+  const item=document.querySelector(`.goal-item[data-id="${id}"]`);
+  const already=(type==='tick'&&item.classList.contains('is-tick'))||(type==='cross'&&item.classList.contains('is-cross'));
+  item.classList.remove('is-tick','is-cross');
+  item.querySelectorAll('.tbtn:not(.del-btn)').forEach(b=>b.classList.remove('active'));
+  if(!already){
+    item.classList.add(type==='tick'?'is-tick':'is-cross');
+    item.querySelector('.'+type+'-btn').classList.add('active');
+    MDRec.tasks[id]=type;
+  } else {
+    delete MDRec.tasks[id];
+  }
+  updateScore(); autoSave();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SCORE
+// ═══════════════════════════════════════════════════════════════════
+function updateScore(){
+  const items=document.querySelectorAll('.goal-item');
+  let t=0,x=0; items.forEach(i=>{if(i.classList.contains('is-tick'))t++;else if(i.classList.contains('is-cross'))x++;});
+  const ring=document.getElementById('score-ring');
+  if(!t&&!x){
+    ring.style.setProperty('--rp',0); ring.style.setProperty('--rc','var(--text3)');
+    document.getElementById('score-n').textContent='—'; document.getElementById('score-n').style.color='var(--text3)';
+    document.getElementById('score-title').textContent='ابدأ يومك بسم الله! 🌅';
+    document.getElementById('score-sub').textContent='لا توجد أهداف مسجّلة بعد'; return;
+  }
+  const total=items.length, r=t/(t+x)||0;
+  const pct=Math.round((t/total)*100);
+  const clr=r===1?'var(--green)':r>=.7?'var(--green)':r>=.4?'var(--orange)':'var(--red)';
+  ring.style.setProperty('--rp',pct); ring.style.setProperty('--rc',clr);
+  document.getElementById('score-n').textContent=toAr(t)+'/'+toAr(total);
+  document.getElementById('score-n').style.color=clr;
+  const msgs=[[1,'يوم مثالي ما شاء الله! 🌟'],[.7,'ممتاز، استمر! 🔥'],[.4,'يوم مختلط، غداً أفضل 🌅'],[0,'لا بأس، الغد فرصة جديدة 🌙']];
+  const msg=msgs.find(([rv])=>r>=rv);
+  document.getElementById('score-title').textContent=msg?msg[1]:'بسم الله!';
+  document.getElementById('score-sub').textContent=`${toAr(t)} ✓  و  ${toAr(x)} ✗  من  ${toAr(total)} هدف`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  AUTO-SAVE  (update cache + remote)
+// ═══════════════════════════════════════════════════════════════════
+function autoSave(){
+  MDRec.note=document.getElementById('day-note').value;
+  DSC[AD.dateKey]=stateOf(MDRec.tasks);
+  // cache labels for stats
+  DSC['_t_'+AD.dateKey]={...MDRec.tasks};
+  DSC['_l_'+AD.dateKey]=MDGoals.map(g=>g.label);
+  setDayRecord(CU.username,AD.dateKey,MDRec); // async, fire & forget
   renderCalendar();
 }
 
-function updateScore() {
-  const items = document.querySelectorAll('.check-item');
-  const total = items.length;
-  let done = 0;
-  items.forEach(i => { if(i.classList.contains('checked')) done++; });
-  const pct = Math.round((done/total)*100);
-
-  const circle = document.getElementById('score-circle');
-  circle.style.setProperty('--pct', pct);
-  document.getElementById('score-num').textContent = pct + '%';
-  document.getElementById('score-sub').textContent = `${toArabicNum(done)} من ${toArabicNum(total)} مهمة مكتملة`;
-
-  const titles = ['ابدأ يومك بسم الله! 🌅','استمر، أنت على الطريق 💪','جيد جداً، اكمل! 🔥','ممتاز، قريب من الإتمام ⭐','يوم مثالي ما شاء الله 🌟'];
-  const idx = pct===0?0:pct<30?1:pct<60?2:pct<90?3:4;
-  document.getElementById('score-title').textContent = titles[idx];
-}
-
-function saveDay() {
-  autoSave();
-  // Visual feedback
-  const btn = document.querySelector('.save-btn');
-  btn.textContent = '✅ تم الحفظ!';
-  btn.style.background = 'rgba(52,211,153,0.2)';
-  btn.style.borderColor = 'rgba(52,211,153,0.5)';
-  btn.style.color = 'var(--green)';
-  setTimeout(() => {
-    btn.textContent = '💾 حفظ اليوم';
-    btn.style.background = '';
-    btn.style.borderColor = '';
-    btn.style.color = '';
-    closeModal();
-  }, 900);
-}
-
-function changeMonth(dir) {
-  currentHijriMonth = Math.max(0, Math.min(11, currentHijriMonth + dir));
+async function saveDay(){
+  MDRec.note=document.getElementById('day-note').value;
+  DSC[AD.dateKey]=stateOf(MDRec.tasks);
+  DSC['_t_'+AD.dateKey]={...MDRec.tasks};
+  DSC['_l_'+AD.dateKey]=MDGoals.map(g=>g.label);
+  await setDayRecord(CU.username,AD.dateKey,MDRec);
   renderCalendar();
+  const btn=document.querySelector('.save-btn');
+  btn.textContent='✅ تم الحفظ!';
+  btn.style.cssText='background:rgba(52,211,153,.2);border-color:rgba(52,211,153,.5);color:var(--green)';
+  setTimeout(()=>{btn.textContent='💾 حفظ اليوم';btn.style.cssText='';closeDayModal();},900);
 }
 
-// ── INIT ──
-loadData();
+function closeDayModal(){ document.getElementById('day-overlay').classList.remove('open'); document.body.style.overflow=''; }
+function closeDayOnBg(e){ if(e.target===document.getElementById('day-overlay'))closeDayModal(); }
 
-// Start on current hijri month if in 1448, else Muharram
-const todayH = gregToHijriDay();
-if(todayH) currentHijriMonth = todayH.month;
-else currentHijriMonth = 0;
+// ═══════════════════════════════════════════════════════════════════
+//  MANAGE GOALS MODAL  (view + delete routine/daily goals)
+// ═══════════════════════════════════════════════════════════════════
+async function openMgmt(){
+  showL();
+  const rtIds=await stGet(K.rtIdx(CU.username))||[];
+  const rtGoals=(await Promise.all(rtIds.map(id=>stGet(K.rt(CU.username,id))))).filter(Boolean);
+  hideL();
 
-renderCalendar();
+  const body=document.getElementById('mgmt-body'); body.innerHTML='';
+
+  // SECTION: Add new routine goal
+  const addSec=document.createElement('div'); addSec.style.marginBottom='1.1rem';
+  addSec.innerHTML=`
+    <div style="font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em;">➕ إضافة هدف روتيني جديد</div>
+    <div class="aform-row">
+      <input class="mini-inp" id="mgmt-lbl" placeholder="اسم الهدف…" style="flex:2">
+      <input class="mini-inp" id="mgmt-sub" placeholder="تفاصيل">
+    </div>
+    <div class="aform-row" style="margin-bottom:.45rem">
+      <select class="mini-sel" id="mgmt-cat">
+        ${Object.entries(CATS).map(([v,c])=>`<option value="${v}">${c.icon} ${c.label}</option>`).join('')}
+      </select>
+    </div>
+    <button class="aform-ok" style="width:100%" onclick="mgmtAddRoutine()">إضافة هدف روتيني ✓</button>`;
+  body.appendChild(addSec);
+
+  // DIVIDER
+  body.innerHTML+=`<div style="border-top:1px solid var(--border);margin:.8rem 0"></div>
+    <div style="font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em;">📋 الأهداف الروتينية الحالية (${toAr(rtGoals.length)})</div>`;
+
+  if(rtGoals.length===0){
+    body.innerHTML+=`<div class="empty-goals">لا توجد أهداف روتينية بعد</div>`;
+  } else {
+    rtGoals.forEach(g=>{
+      const cat=CATS[g.category]||CATS.other;
+      const el=document.createElement('div'); el.className='goal-manage-item';
+      el.innerHTML=`
+        <div class="gmi-info">
+          <strong>${cat.icon} ${g.label}</strong>
+          <span>${g.sub||'—'} · <span class="${cat.cls}" style="font-size:.6rem;font-weight:700">${cat.label}</span></span>
+        </div>
+        <button class="gmi-del" onclick="mgmtDel('${g.id}')">🗑 حذف</button>`;
+      body.appendChild(el);
+    });
+  }
+
+  document.getElementById('mgmt-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+async function mgmtAddRoutine(){
+  const label=document.getElementById('mgmt-lbl').value.trim();
+  if(!label) return;
+  const sub=document.getElementById('mgmt-sub').value.trim();
+  const cat=document.getElementById('mgmt-cat').value;
+  showL();
+  await addRoutineGoal(CU.username,{label,sub,category:cat});
+  hideL();
+  closeMgmt();
+  openMgmt();
+}
+
+async function mgmtDel(goalId){
+  if(!confirm('هل تريد حذف هذا الهدف من كل الأيام؟')) return;
+  showL();
+  await deleteRoutineGoal(CU.username,goalId);
+  hideL();
+  closeMgmt();
+  openMgmt();
+}
+
+function closeMgmt(){ document.getElementById('mgmt-overlay').classList.remove('open'); document.body.style.overflow=''; }
+function closeMgmtOnBg(e){ if(e.target===document.getElementById('mgmt-overlay'))closeMgmt(); }
+
+// ═══════════════════════════════════════════════════════════════════
+//  NAV
+// ═══════════════════════════════════════════════════════════════════
+function changeView(d){ CV=Math.max(-1,Math.min(11,CV+d)); renderAll(); }
+
+// ═══════════════════════════════════════════════════════════════════
+//  KEYBOARD
+// ═══════════════════════════════════════════════════════════════════
+document.getElementById('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('r-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
+
+// ═══════════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════════
+hideL();
+document.getElementById('auth-screen').classList.add('active');
 </script>
 </body>
 </html>
